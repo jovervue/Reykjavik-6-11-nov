@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Interactieve kaart van de musea, tentoonstellingen en vikinglocaties van Reykjavík en omgeving.">
+<meta property="og:title" content="Musea Reykjavík">
+<meta property="og:description" content="Interactieve kaart van musea, tentoonstellingen en vikinglocaties in en rond Reykjavík.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B3FA0'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3C/svg%3E">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Musea Reykjavík</title>
+<link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://b.basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://c.basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://d.basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --inkt:#171A1F; --papier:#EEF1F4; --paneel:#FFF; --steen:#6E7684;
+  --aalto:#1B3FA0; --geo:#B36A15; --viking:#6B3FA0; --rand:rgba(23,26,31,.13);
+  --sheet:58dvh; --peek:92px; --safe:env(safe-area-inset-bottom,0px);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button,a,input{touch-action:manipulation}
+html,body{height:100%;height:100dvh;margin:0;overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-size:15px;line-height:1.45}
+
+/* ---- kop ---- */
+#kop{
+  position:fixed;top:0;left:0;right:0;z-index:900;background:var(--paneel);
+  border-bottom:1px solid var(--rand);padding:calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+}
+#kop h1{font-size:16px;margin:0 0 6px;font-weight:700;letter-spacing:-.01em}
+#kop h1 span{font-weight:400;color:var(--steen);font-size:13px}
+#lagen{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#lagen::-webkit-scrollbar{display:none}
+.tog{
+  flex:none;border:1px solid var(--rand);background:var(--paneel);color:var(--steen);
+  padding:7px 12px;border-radius:999px;font:inherit;font-size:13px;min-height:36px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.tog .punt{width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
+.tog[aria-pressed="true"]{color:var(--inkt);border-color:currentColor;background:rgba(23,26,31,.05);font-weight:600}
+.tog[aria-pressed="false"]{opacity:.5}
+
+/* ---- kaart ---- */
+#kaart{position:fixed;inset:0;background:#DCE3E8;z-index:1}
+
+/* ---- bottom sheet ---- */
+#sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:950;background:var(--paneel);
+  border-top:1px solid var(--rand);border-radius:16px 16px 0 0;
+  box-shadow:0 -3px 18px rgba(23,26,31,.13);
+  height:var(--sheet);max-height:640px;transform:translateY(calc(var(--sheet) - var(--peek)));
+  transition:transform .22s ease;display:flex;flex-direction:column;
+  padding-bottom:var(--safe);touch-action:none;
+}
+#sheet.open{transform:translateY(0)}
+#greep{padding:8px 14px 10px;flex:none;cursor:grab}
+#greep .bar{width:38px;height:4px;border-radius:2px;background:var(--rand);margin:0 auto 8px}
+#greep .rij{display:flex;align-items:center;gap:10px}
+#greep .titel{font-weight:600;font-size:14px}
+#greep .telling{color:var(--steen);font-size:13px;margin-left:auto;font-variant-numeric:tabular-nums}
+#zoek{
+  margin:0 14px 8px;padding:10px 12px;border-radius:9px;border:1px solid var(--rand);
+  background:var(--papier);color:var(--inkt);font:inherit;font-size:16px;flex:none;
+}
+#zoek:focus{outline:2px solid var(--aalto);outline-offset:1px}
+#cats{display:flex;gap:6px;overflow-x:auto;padding:0 14px 8px;flex:none;scrollbar-width:none}
+#cats::-webkit-scrollbar{display:none}
+#lijst{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;padding-bottom:20px;overscroll-behavior:contain}
+.item{
+  width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--rand);
+  color:inherit;font:inherit;padding:12px 14px;min-height:58px;display:block;cursor:pointer;
+}
+.item:active{background:rgba(27,63,160,.08)}
+.item .naam{font-weight:600;font-size:14.5px;line-height:1.25}
+.item .meta{color:var(--steen);font-size:12px;margin-top:3px;display:flex;gap:8px;align-items:center}
+.item .streep{width:3px;height:12px;border-radius:2px;flex:none}
+.item .afstand{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+.merk{margin-left:5px;font-size:11px}
+.merk.expo{color:var(--geo)} .merk.vik{color:var(--viking)} .merk.winter{color:var(--aalto)}
+#voet{padding:14px;color:var(--steen);font-size:11.5px;border-top:1px solid var(--rand)}
+#voet button{background:none;border:0;color:var(--aalto);font:inherit;font-size:11.5px;padding:6px 0;cursor:pointer;text-decoration:underline}
+
+/* ---- popups ---- */
+.leaflet-popup-content-wrapper{background:var(--paneel);color:var(--inkt);border-radius:10px;border:1px solid var(--rand);box-shadow:0 4px 20px rgba(23,26,31,.18)}
+.leaflet-popup-content{margin:12px 14px;font-size:13.5px;line-height:1.45}
+.leaflet-container a.leaflet-popup-close-button{width:34px;height:34px;font-size:20px;padding:6px 6px 0 0;color:var(--steen)}
+.pop-cat{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--steen)}
+.pop-naam{font-weight:700;font-size:16px;margin:2px 0 1px;line-height:1.2}
+.pop-isl{color:var(--steen);font-size:12.5px;font-style:italic;margin-bottom:5px}
+.pop-adres{color:var(--steen);font-size:12.5px;margin-bottom:6px}
+.pop-links{margin-top:10px;display:flex;flex-direction:column;gap:2px}
+.pop-links a{color:var(--aalto);font-size:13.5px;padding:6px 0;display:inline-block}
+.pop-expo{margin-top:8px;padding:7px 9px;border-left:2px solid var(--geo);background:rgba(179,106,21,.10);font-size:12.5px}
+.pop-winter{margin-top:8px;padding:7px 9px;border-left:2px solid var(--aalto);background:rgba(27,63,160,.09);font-size:12.5px}
+.leaflet-control-attribution{background:rgba(255,255,255,.82)!important;color:var(--steen)!important;font-size:10px!important}
+.leaflet-bottom.leaflet-right{margin-bottom:calc(var(--peek) - 8px)}
+.leaflet-control-zoom{display:none}
+.marker{width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.marker i{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(23,26,31,.4);display:block}
+.marker.thuis i{width:15px;height:15px;border-radius:3px;transform:rotate(45deg)}
+#hier{
+  position:fixed;right:12px;bottom:calc(var(--peek) + 16px + var(--safe));z-index:940;width:46px;height:46px;
+  border-radius:50%;border:1px solid var(--rand);background:var(--paneel);font-size:19px;
+  box-shadow:0 2px 10px rgba(23,26,31,.16);cursor:pointer;line-height:1;
+}
+@media (min-width:900px){
+  :root{--sheet:100dvh}
+  #sheet{left:auto;right:0;top:0;width:380px;height:100dvh;border-radius:0;border-left:1px solid var(--rand);border-top:0;transform:none;box-shadow:none;padding-top:64px}
+  #greep .bar{display:none}
+  #kaart{right:380px}
+  .leaflet-control-zoom{display:block}
+  #hier{right:396px;bottom:20px}
+  .leaflet-bottom.leaflet-right{margin-bottom:0}
+}
+@media (prefers-reduced-motion:reduce){#sheet{transition:none}}
+</style>
+</head>
+<body>
+
+<div id="kaart"></div>
+
+<header id="kop">
+  <h1>Musea Reykjavík <span>· 6–11 nov 2026</span></h1>
+  <div id="lagen">
+    <button class="tog" data-laag="musea" aria-pressed="true"><span class="punt" style="background:#171A1F"></span>Musea</button>
+    <button class="tog" data-laag="expo" aria-pressed="true"><span class="punt" style="background:#B36A15"></span>Expo’s</button>
+    <button class="tog" data-laag="vik" aria-pressed="false"><span class="punt" style="background:#6B3FA0"></span>Viking</button>
+  </div>
+</header>
+
+<button id="hier" title="Mijn positie" aria-label="Mijn positie">◎</button>
+
+<section id="sheet" aria-label="Lijst met locaties">
+  <div id="greep">
+    <div class="bar"></div>
+    <div class="rij"><span class="titel">Locaties</span><span class="telling" id="telling"></span></div>
+  </div>
+  <input id="zoek" type="search" placeholder="Zoek op naam of adres" aria-label="Zoeken" enterkeyhint="search">
+  <div id="cats"></div>
+  <div id="lijst"></div>
+  <div id="voet">
+    <div id="status">Posities laden…</div>
+    <button id="opnieuw" type="button">Posities opnieuw ophalen</button>
+    <div style="margin-top:6px">❄ beperkt open in de winter · ● tentoonstelling · ◆ vikingtijd<br>
+    Kaart © OpenStreetMap, © CARTO · afstanden hemelsbreed</div>
+  </div>
+</section>
+
+<script>
+/*
+ Musea Reykjavík — interactieve kaart
+ Kaartlaag: OpenStreetMap / CARTO Positron.  Geocoding: Nominatim (OpenStreetMap),
+ gebruikt volgens hun policy: max. 1 verzoek per seconde, resultaten lokaal gecached.
+ Gegevens over musea: visitreykjavik.is, listasafn.is, listasafnreykjavikur.is,
+ nordichouse.is, thjodminjasafn.is, borgarsogusafn.is, i8.is, vikingworld.is, landnam.is.
+*/
+const CATS = {
+  kunst:   {label:"Kunst",              kleur:"#1B3FA0"},
+  hist:    {label:"Geschiedenis",       kleur:"#B36A15"},
+  natuur:  {label:"Natuur & beleving",  kleur:"#3E6B48"},
+  aalto:   {label:"Aalto / bibliotheek",kleur:"#00A3C4"},
+  extra:   {label:"Curiosa",            kleur:"#8E3F6B"}
+};
+
+const M = [
+ {n:"Nordic House — Norræna húsið", isl:"Aalto-bibliotheek, 1968", c:"aalto", g:"Sturlugata 5, Reykjavík", ll:[64.1387,-21.9497],
+  a:"Sturlugata 5, Vatnsmýri",
+  d:"Het enige gebouw van Alvar Aalto in IJsland. Blauw keramisch dak, centrale lichtkoker in de bibliotheek, alle meubels en lampen van Aalto zelf. 30.000+ titels in zeven Noordse talen.",
+  u:"https://nordichouse.is/en/", w:"Di–zo 10–17u, maandag gesloten."},
+
+ {n:"Marshallhúsið", isl:"Nýlistasafnið, Kling & Bang, Þula, i8 Grandi", c:"kunst", g:"Marshallhúsið, Reykjavík", ll:[64.1546,-21.9550],
+  a:"Grandagarður 20, Grandi", d:"Oude visfabriek uit 1948, nu vier kunstruimtes onder één dak plus het atelier van Ólafur Elíasson en restaurant La Primavera. Tien minuten wandelen van jullie logement.",
+  u:"https://i8.is/about", vfl:true},
+ {n:"i8 Gallery", isl:"", c:"kunst", g:"Tryggvagata 16, Reykjavík", ll:[64.1492,-21.9418],
+  a:"Tryggvagata 16", d:"Sinds 1995 de belangrijkste commerciële galerie van het land, tegenover Hafnarhús. Gratis binnenlopen.",
+  u:"https://i8.is", vfl:true},
+ {n:"Víkingaheimar", isl:"Viking World", c:"hist", g:"Víkingaheimar, Njarðvík", ll:[63.97602,-22.52847],
+  a:"Víkingabraut 1, Njarðvík (Reykjanesbær)", d:"Gebouwd rond de Íslendingur, een replica op ware grootte van het Gokstadschip uit ±890, in 2000 van IJsland naar New York gezeild. Vlak bij de luchthaven Keflavík — te doen op de dag van aankomst of vertrek.",
+  u:"https://www.vikingworld.is/", vfl:true},
+ {n:"Landnámssetur Íslands", isl:"The Settlement Center", c:"hist", g:"Landnámssetur Íslands, Borgarnes", ll:[64.5385,-21.9210],
+  a:"Brákarbraut 13–15, Borgarnes", d:"Twee tentoonstellingen met audiogids: de landname van IJsland, en de Egilssaga. In twee van de oudste huizen van Borgarnes, op een uur rijden noordwaarts.",
+  u:"https://www.landnam.is/eng/", vfl:true},
+ {n:"Þingvellir", isl:"Hakið-bezoekerscentrum", c:"hist", g:"Þingvellir visitor centre, Iceland", ll:[64.2559,-21.1300],
+  a:"Þingvellir Nationaal Park, ±45 km oost", d:"Waar het Alþingi vanaf 930 samenkwam, in de breuk tussen twee continentale platen. Het bezoekerscentrum Hakið heeft een expo over de vergaderplaats; het terrein zelf is vrij toegankelijk.",
+  u:"https://www.thingvellir.is", vfl:true},
+ {n:"Sólfar", isl:"Sun Voyager", c:"extra", g:"Sólfar Sun Voyager, Reykjavík", ll:[64.1475,-21.9222],
+  a:"Sæbraut, aan het water", d:"Wordt bijna altijd voor een vikingschip aangezien, maar is het niet: een droomboot van Jón Gunnar Árnason uit 1990, een ode aan de zon. Altijd open, gratis.",
+  vfl:true},
+ {n:"Harpa", isl:"concert- en congreshuis", c:"extra", g:"Harpa, Reykjavík", ll:[64.1505,-21.9327],
+  a:"Austurbakki 2, oude haven", d:"Glazen gevel van Ólafur Elíasson. Geen museum, maar tijdens jullie verblijf de hoofdlocatie van de speciale Airwaves-concerten.",
+  t:"Iceland Airwaves 5–7 nov 2026; special events in Harpa: Shygirl 4 nov, Daði Freyr met het IJslands Symfonieorkest 5 nov, The Streets 8 nov.",
+  u:"https://icelandairwaves.is", vfl:true},
+ {n:"Listasafn Reykjavíkur — Hafnarhús", isl:"Reykjavík Art Museum", c:"kunst", g:"Tryggvagata 17, Reykjavík", ll:[64.1494,-21.9420],
+  a:"Tryggvagata 17", d:"Hedendaagse kunst in een oud havenmagazijn; vaste zaal met Erró.",
+  u:"https://listasafnreykjavikur.is", v:"reykjavik-art-museum-hafnarhus", t:"Erró: Remix is doorlopend te zien. Najaarsprogramma nog niet bekend."},
+ {n:"Listasafn Reykjavíkur — Kjarvalsstaðir", isl:"", c:"kunst", g:"Flókagata 24, Reykjavík", ll:[64.13781,-21.91350],
+  a:"Flókagata 24, Klambratún", d:"Werk van Jóhannes S. Kjarval, IJslands bekendste schilder, in een modernistisch paviljoen in het park.",
+  u:"https://listasafnreykjavikur.is", v:"reykjavik-art-museum-kjarvalsstadir", t:"Kjarval og 20. öldin loopt tot 18.10.2026; wat daarna komt is nog niet aangekondigd."},
+ {n:"Listasafn Reykjavíkur — Ásmundarsafn", isl:"", c:"kunst", g:"Ásmundarsafn, Reykjavík", ll:[64.1436,-21.8930],
+  a:"Sigtún", d:"Koepelwoning en atelier die beeldhouwer Ásmundur Sveinsson zelf ontwierp; beeldentuin errond.",
+  u:"https://listasafnreykjavikur.is", v:"reykjavik-art-museum-asmundarsafn", t:"Ásmundur Sveinsson: Wonderland — langlopende opstelling."},
+ {n:"Listasafn Íslands", isl:"National Gallery of Iceland", c:"kunst", g:"Fríkirkjuvegur 7, Reykjavík", ll:[64.1450,-21.9330],
+  a:"Fríkirkjuvegur 7", d:"Nationale kunstcollectie sinds 1884, aan de vijver Tjörnin.",
+  u:"https://listasafn.is", v:"national-gallery-iceland", t:"Kjarval – Kjarval in the East, 3.10.2026 – 17.1.2027: loopt tijdens jullie verblijf."},
+ {n:"Einar Jónsson-museum", isl:"Listasafn Einars Jónssonar", c:"kunst", g:"Eiríksgata 3, Reykjavík", ll:[64.1418,-21.9260],
+  a:"Eiríksgata 3, bij Hallgrímskirkja", d:"Eerste openbare kunstmuseum van IJsland (1923); symbolistische beeldhouwkunst, gratis beeldentuin achteraan.",
+  u:"https://lej.is", v:"einar-jonsson-sculpture-museum"},
+ {n:"Sigurjón Ólafsson-museum", isl:"LSÓ", c:"kunst", g:"Laugarnestangi 70, Reykjavík", ll:[64.1490,-21.8830],
+  a:"Laugarnestangi 70", d:"Beeldhouwwerk in het voormalige atelier aan zee. Buiten het seizoen beperkt open.",
+  v:"sigurjon-olafsson-museum", w:"Winteruren zeer beperkt — vooraf bellen of mailen."},
+ {n:"Gerðarsafn", isl:"Kópavogur Art Museum", c:"kunst", g:"Hamraborg 4, Kópavogur", ll:[64.1120,-21.9060],
+  a:"Hamraborg 4, Kópavogur", d:"Modern en hedendaags; genoemd naar beeldhouwster Gerður Helgadóttir.",
+  u:"https://gerdarsafn.is", v:"gerdarsafn-art-museum"},
+ {n:"Hafnarborg", isl:"", c:"kunst", g:"Strandgata 34, Hafnarfjörður", ll:[64.0670,-21.9550],
+  a:"Strandgata 34, Hafnarfjörður", d:"Cultuur- en kunstcentrum van Hafnarfjörður, sinds 1983.",
+  u:"https://hafnarborg.is", v:"hafnarborg-hafnarfjordur-centre-culture-and-fine-art"},
+ {n:"Hönnunarsafn Íslands", isl:"Museum of Design and Applied Art", c:"kunst", g:"Garðatorg 1, Garðabær", ll:[64.0890,-21.9250],
+  a:"Garðatorg 1, Garðabær", d:"IJslands design en toegepaste kunst van 1900 tot nu. Kleine zaal, sterke wisselexpo's.",
+  u:"https://honnunarsafn.is", v:"museum-design-and-applied-art"},
+
+ {n:"Þjóðminjasafn Íslands", isl:"Nationaal Museum", c:"hist", g:"Suðurgata 41, Reykjavík", ll:[64.1417,-21.9490],
+  a:"Suðurgata 41", d:"De rode draad door 1200 jaar IJslandse geschiedenis; gratis audiogids. Naast het Noorse Huis.",
+  u:"https://thjodminjasafn.is", v:"national-museum-iceland"},
+ {n:"Safnahúsið — House of Collections", isl:"", c:"hist", g:"Hverfisgata 15, Reykjavík", ll:[64.1470,-21.9330],
+  a:"Hverfisgata 15", d:"'Treasures of a Nation': topstukken uit zes nationale collecties in het oude bibliotheekgebouw van 1909.",
+  u:"https://thjodminjasafn.is", v:"house-collections"},
+ {n:"World in Words — Edda", isl:"Heimur í orðum", c:"hist", g:"Arngrímsgata 5, Reykjavík", ll:[64.1396,-21.9540],
+  a:"Arngrímsgata 5, Edda-huis", d:"De originele middeleeuwse handschriften (saga's, Edda) in het nieuwe Árni Magnússon-instituut.",
+  u:"https://arnastofnun.is", v:"world-words"},
+ {n:"Aðalstræti — The Settlement Exhibition", isl:"Landnámssýningin", c:"hist", g:"Aðalstræti 16, Reykjavík", ll:[64.1477,-21.9426],
+  a:"Aðalstræti 16", d:"Ondergronds rond een echt vikinglanghuis uit 930–1000, het oudste bouwspoor van de stad.",
+  u:"https://borgarsogusafn.is", v:"adalstraeti-settlement-exhibition"},
+ {n:"Sjóminjasafnið — Maritiem Museum", isl:"Stories of Sea and Land", c:"hist", g:"Grandagarður 8, Reykjavík", ll:[64.1524,-21.9490],
+  a:"Grandagarður 8, Grandi", d:"In een oude visfabriek aan de oude haven; rondleiding op kustwachtschip Óðinn. Op wandelafstand van jullie logement.",
+  u:"https://borgarsogusafn.is", v:"reykjavik-maritime-museum-stories-sea-and-land"},
+ {n:"Ljósmyndasafn Reykjavíkur", isl:"Museum of Photography", c:"hist", g:"Tryggvagata 15, Reykjavík", ll:[64.1490,-21.9410],
+  a:"Tryggvagata 15, 6e verdieping", d:"Enige fotomuseum van de stad, 19e eeuw tot nu. Gratis toegang.",
+  u:"https://borgarsogusafn.is", v:"reykjavik-museum-photography"},
+ {n:"Árbæjarsafn — openluchtmuseum", isl:"", c:"hist", g:"Kistuhylur 4, Reykjavík", ll:[64.1155,-21.7940],
+  a:"Kistuhylur 4", d:"Twintig verplaatste historische huizen als een dorp van rond 1900.",
+  u:"https://borgarsogusafn.is", v:"arbaer-open-air-museum",
+  w:"In de winter meestal enkel via rondleiding op vaste uren."},
+ {n:"Viðey", isl:"Viðeyjarstofa", c:"hist", g:"Viðey, Reykjavík", ll:[64.1580,-21.8420],
+  a:"Eiland, veerboot vanaf Skarfabakki", d:"Oudste stenen gebouw van IJsland, Imagine Peace Tower van Yoko Ono, kerk en wandelpaden.",
+  u:"https://borgarsogusafn.is", v:"videy-island",
+  w:"Veerdienst in november sterk beperkt, vaak enkel in het weekend."},
+ {n:"Saga Museum", isl:"", c:"hist", g:"Grandagarður 2, Reykjavík", ll:[64.1518,-21.9470],
+  a:"Grandagarður 2", d:"Wassenbeeldenversie van de saga's; snel te doen, populair bij kinderen.",
+  u:"https://sagamuseum.is", v:"saga-museum"},
+ {n:"Gljúfrasteinn", isl:"Huis van Halldór Laxness", c:"hist", g:"Gljúfrasteinn, Mosfellsbær", ll:[64.1663,-21.5065],
+  a:"Mosfellsdalur, ±20 km oost", d:"Woonhuis van de Nobelprijswinnaar, onaangeroerd sinds de jaren '60. Auto of bus 15+27 nodig.",
+  u:"https://gljufrasteinn.is", v:"gljufrasteinn", w:"Winter: beperkte dagen en uren."},
+ {n:"Nesstofa", isl:"Medisch-historisch museum", c:"hist", g:"Nesstofa, Seltjarnarnes", ll:[64.1544,-22.0033],
+  a:"Seltjarnarnes", d:"Een van de oudste stenen huizen van het land, woning van de eerste landsarts.",
+  u:"https://thjodminjasafn.is", v:"nesstofa-medical-history-museum", w:"Doorgaans enkel in het zomerseizoen open."},
+ {n:"Byggðasafn Hafnarfjarðar", isl:"Hafnarfjörður Museum", c:"hist", g:"Vesturgata 8, Hafnarfjörður", ll:[64.0680,-21.9570],
+  a:"Vesturgata 8, Hafnarfjörður", d:"Stadsgeschiedenis in enkele oude huizen aan de haven.",
+  v:"hafnarfjordur-museum"},
+ {n:"Hofsstaðir", isl:"Viking Settlement", c:"hist", g:"Hofsstaðir, Garðabær", ll:[64.0900,-21.9200],
+  a:"Garðabær", d:"Opgegraven langhuis uit 870–930, buiten te bekijken met infopanelen.",
+  v:"hofstadir-viking-settlement"},
+
+ {n:"Perlan — Wonders of Iceland", isl:"", c:"natuur", g:"Perlan, Reykjavík", ll:[64.1290,-21.9190],
+  a:"Öskjuhlíð", d:"IJsgrot, planetarium over het noorderlicht en een uitkijkterras over de stad. In het donker van november een goede noorderlicht-plan B.",
+  u:"https://perlan.is", v:"perlan-wonders-iceland"},
+ {n:"Whales of Iceland", isl:"", c:"natuur", g:"Fiskislóð 23, Reykjavík", ll:[64.1546,-21.9600],
+  a:"Fiskislóð 23–25, Grandi", d:"23 walvissen op ware grootte in een donkere loods. Vlakbij jullie logement.",
+  u:"https://whalesoficeland.is", v:"whales-iceland"},
+ {n:"Náttúrufræðistofa Kópavogs", isl:"Natuurmuseum Kópavogur", c:"natuur", g:"Hamraborg 6a, Kópavogur", ll:[64.1122,-21.9070],
+  a:"Hamraborg 6a, Kópavogur", d:"600 m² IJslandse flora, fauna en geologie; gratis.",
+  u:"https://natkop.is", v:"nature-museum-kopavogur"},
+
+ {n:"Hið íslenzka reðasafn", isl:"Phallological Museum", c:"extra", g:"Kalkofnsvegur 2, Reykjavík", ll:[64.1480,-21.9370],
+  a:"Kalkofnsvegur 2", d:"'s Werelds grootste penis-collectie. Precies wat het belooft.",
+  u:"https://phallus.is", v:"icelandic-phallological-museum"},
+ {n:"Pönksafn Íslands", isl:"Icelandic Punk Museum", c:"extra", g:"Bankastræti 2, Reykjavík", ll:[64.1470,-21.9350],
+  a:"Bankastræti 2", d:"In een voormalig openbaar toilet onder de straat. Klein, luid, tien minuten werk.",
+  u:"https://punkmuseum.is", vfl:true},
+ {n:"Aurora Reykjavík", isl:"", c:"extra", g:"Grandagarður 2, Reykjavík", ll:[64.1518,-21.9475],
+  a:"Grandagarður 2", d:"Uitleg over het noorderlicht met projectie — commerciële beleving, geen museum.",
+  u:"https://aurorareykjavik.is", vfl:true},
+ {n:"Icelandic Lava Show", isl:"", c:"extra", g:"Fiskislóð 73, Reykjavík", ll:[64.1560,-21.9640],
+  a:"Fiskislóð 73, Grandi", d:"Echte gesmolten lava uitgegoten voor je neus. Reserveren nodig.",
+  u:"https://icelandiclavashow.com", vfl:true}
+];
+
+const EXPO = [
+ {plek:"Listasafn Íslands", titel:"Kjarval – Kjarval in the East",
+  periode:"3.10.2026 – 17.1.2027", zeker:true,
+  info:"Kjarval geschilderd in Oost-IJsland. Loopt met zekerheid tijdens jullie verblijf.",
+  url:"https://www.listasafn.is/en/art/upcoming-exhibitions/"},
+ {plek:"Hafnarhús", titel:"Erró: Remix — including a selection of Scapes",
+  periode:"doorlopend", zeker:true,
+  info:"Vaste Erró-zaal in het oude havenmagazijn.",
+  url:"https://listasafnreykjavikur.is/en/exhibitions"},
+ {plek:"Ásmundarsafn", titel:"Ásmundur Sveinsson: Wonderland",
+  periode:"langlopend (met Remnants en Open workshop)", zeker:true,
+  info:"Langlopende opstelling in het koepelhuis van de beeldhouwer.",
+  url:"https://listasafnreykjavikur.is/en/exhibitions"},
+ {plek:"Harpa", titel:"Iceland Airwaves",
+  periode:"5–7 november 2026", zeker:true,
+  info:"Special events in Harpa: Shygirl 4 nov, Daði Freyr met het Symfonieorkest 5 nov, The Streets 8 nov. Overdag gratis off-venue optredens in winkels, cafés en museumzalen in het centrum.",
+  url:"https://icelandairwaves.is"},
+ {plek:"Kjarvalsstaðir", titel:"Najaarsprogramma nog niet aangekondigd",
+  periode:"Kjarval og 20. öldin loopt t/m 18.10.2026", zeker:false,
+  info:"Wat er in november hangt, was begin augustus nog niet gepubliceerd.",
+  url:"https://listasafnreykjavikur.is/en/exhibitions"},
+ {plek:"Marshallhúsið", titel:"i8 Grandi: 'just a shell'",
+  periode:"22.1.2026 – 22.12.2026", zeker:true,
+  info:"i8 Grandi toont elk jaar één kunstenaar. Loopt met zekerheid tijdens jullie verblijf. In hetzelfde gebouw wisselen Nýlistasafnið, Kling & Bang en Þula sneller van programma — dat najaarsprogramma is nog niet gepubliceerd.",
+  url:"https://i8.is/exhibitions/"},
+ {plek:"Nordic House", titel:"Membrane: Myth and Fictions of Soil — Thomas Pausz",
+  periode:"loopt in augustus 2026, einddatum onbekend", zeker:false,
+  info:"Tentoonstelling in zaal Hvelfing, met rondleidingen door de kunstenaar. Of ze in november nog hangt, staat nergens vermeld.",
+  url:"https://nordichouse.is/en/"},
+ {plek:"Þjóðminjasafn", titel:"Wisselexpo's: FLOW, The Bridal Costume, Like cats and dogs, Fengur",
+  periode:"lopen in augustus 2026, einddatums niet gepubliceerd", zeker:false,
+  info:"Naast de vaste opstelling 'Making of a Nation', die er sowieso is.",
+  url:"https://www.thjodminjasafn.is/en"},
+ {plek:"Ljósmyndasafn", titel:"Wisseltentoonstelling fotografie",
+  periode:"programma najaar nog niet bekend", zeker:false,
+  info:"Vier wisselexpo's per jaar, gratis toegang.",
+  url:"https://borgarsogusafn.is"}
+];
+
+const VIKING = [
+ {plek:"Settlement Exhibition", info:"Een echt langhuis uit 930–1000, in situ opgegraven onder Aðalstræti, met de oudste bouwsporen van Reykjavík en een muurfragment van vóór de tefralaag van 871±2."},
+ {plek:"Þjóðminjasafn", info:"Vaste opstelling 'Making of a Nation' begint bij de landname: grafvondsten, zwaarden, het Þór-beeldje uit Eyrarland en de kerkdeur van Valþjófsstaður."},
+ {plek:"World in Words", info:"De middeleeuwse handschriften waarin de sagas en de Edda zijn overgeleverd — de belangrijkste geschreven bron over de vikingtijd."},
+ {plek:"Saga Museum", info:"Nagespeelde sagascènes met wassen figuren. Populair en toegankelijk, maar meer beleving dan archeologie."},
+ {plek:"Hofsstaðir", info:"Opgegraven langhuis uit 870–930, buiten te bekijken met lichtlijnen en infopanelen. Gratis, altijd toegankelijk."},
+ {plek:"Viðey", info:"Op het eiland zijn resten van een nederzetting uit de 10e eeuw opgegraven, naast het klooster en het latere landhuis."},
+ {plek:"Víkingaheimar", info:"Het schip Íslendingur, replica van het Gokstadschip (±890), plus vondsten uit de Noorse wereld en de expo over de Noord-Atlantische vikingtocht."},
+ {plek:"Landnámssetur", info:"De landname en de Egilssaga, elk als aparte tentoonstelling met audiogids in het Nederlands of Engels."},
+ {plek:"Þingvellir", info:"Vergaderplaats van het Alþingi vanaf 930 — het politieke hart van de vikingtijd in IJsland."},
+ {plek:"Sólfar", info:"Géén vikingschip, ondanks de reputatie. Meegenomen om verwarring te voorkomen."},
+ {plek:"Árbæjarsafn", info:"Geen vikingtijd, maar wel een gereconstrueerde turfhoeve die de bouwtraditie toont die uit die periode stamt."}
+];
+
+const THUIS=[64.1512,-21.9470];
+const FIJN = window.matchMedia('(pointer:fine)').matches;
+const CACHE='rvk-coords-v2';
+let vertrek=THUIS.slice(), vertrekNaam='Mýrargata 18';
+
+window.addEventListener('load',start);
+
+function start(){
+/* ---------- kaart ---------- */
+const kaart=L.map('kaart',{
+  preferCanvas:true, zoomControl:FIJN, attributionControl:true,
+  zoomSnap:.5, tap:false
+}).setView([64.1465,-21.9400],13);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+  maxZoom:19, minZoom:8, updateWhenIdle:false, updateWhenZooming:false, keepBuffer:2, crossOrigin:true,
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+}).addTo(kaart);
+
+const laagMusea=L.layerGroup().addTo(kaart);
+const laagExpo =L.layerGroup().addTo(kaart);
+const laagVik  =L.layerGroup();
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function afstand(a,b){
+  const R=6371,r=Math.PI/180,dLat=(b[0]-a[0])*r,dLon=(b[1]-a[1])*r;
+  const x=Math.sin(dLat/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(x));
+}
+const icoon=(kleur,thuis)=>L.divIcon({className:'',
+  html:'<div class="marker'+(thuis?' thuis':'')+'"><i style="background:'+kleur+'"></i></div>',
+  iconSize:[26,26],iconAnchor:[13,13]});
+
+function popupHTML(m){
+  const L2=[];
+  if(m.u) L2.push('<a href="'+m.u+'" target="_blank" rel="noopener">Officiële website'+(m.vfl?' †':'')+' ↗</a>');
+  if(m.v) L2.push('<a href="https://visitreykjavik.is/service/'+m.v+'" target="_blank" rel="noopener">Visit Reykjavík ↗</a>');
+  L2.push('<a href="https://www.google.com/maps/dir/?api=1&destination='+m.ll[0]+','+m.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a>');
+  return '<div class="pop-cat">'+CATS[m.c].label+' · '+m.km.toFixed(1)+' km</div>'+
+   '<div class="pop-naam">'+esc(m.n)+'</div>'+
+   (m.isl?'<div class="pop-isl">'+esc(m.isl)+'</div>':'')+
+   '<div class="pop-adres">'+esc(m.a)+'</div><div>'+esc(m.d)+'</div>'+
+   (m.t?'<div class="pop-expo"><strong>6–11 nov 2026</strong><br>'+esc(m.t)+'</div>':'')+
+   (m.w?'<div class="pop-winter">'+esc(m.w)+'</div>':'');
+}
+const popOpties={maxWidth:Math.min(320,innerWidth-48),autoPanPadding:[20,90]};
+
+/* ---------- markers ---------- */
+M.forEach(m=>{
+  m.km=afstand(vertrek,m.ll);
+  m.marker=L.marker(m.ll,{icon:icoon(CATS[m.c].kleur),title:m.n})
+    .addTo(laagMusea).bindPopup(()=>popupHTML(m),popOpties);
+});
+const thuisMarker=L.marker(THUIS,{icon:icoon('#171A1F',true),title:'Logement'})
+  .addTo(laagMusea).bindPopup('<div class="pop-cat">Vertrekpunt</div><div class="pop-naam">Mýrargata 18</div>',popOpties);
+
+function ring(m,kleur,radius,dash,tip,html){
+  const c=L.circleMarker(m.ll,{radius,color:kleur,weight:2.2,fill:false,dashArray:dash,interactive:true})
+    .bindPopup(html,popOpties);
+  if(FIJN) c.bindTooltip(tip,{direction:'top',offset:[0,-radius]});
+  return c;
+}
+EXPO.forEach(e=>{
+  const m=M.find(x=>x.n.includes(e.plek)); if(!m) return; e.m=m;
+  e.ring=ring(m,'#B36A15',14,e.zeker?null:'4 4',e.titel,
+    '<div class="pop-cat">Tentoonstelling · '+(e.zeker?'bevestigd':'nog te bevestigen')+'</div>'+
+    '<div class="pop-naam">'+esc(e.titel)+'</div><div class="pop-isl">'+esc(m.n)+'</div>'+
+    '<div class="pop-adres">'+esc(e.periode)+'</div><div>'+esc(e.info)+'</div>'+
+    '<div class="pop-links"><a href="'+e.url+'" target="_blank" rel="noopener">Programma ↗</a></div>').addTo(laagExpo);
+});
+VIKING.forEach(v=>{
+  const m=M.find(x=>x.n.includes(v.plek)); if(!m) return; v.m=m;
+  v.ring=ring(m,'#6B3FA0',20,null,'Vikingtijd: '+m.n,
+    '<div class="pop-cat">Vikingtijd &amp; landname</div><div class="pop-naam">'+esc(m.n)+'</div>'+
+    '<div class="pop-adres">'+esc(m.a)+'</div><div>'+esc(v.info)+'</div>').addTo(laagVik);
+});
+
+/* ---------- laagknoppen ---------- */
+const groepen={musea:laagMusea,expo:laagExpo,vik:laagVik};
+document.querySelectorAll('.tog').forEach(b=>{
+  const g=groepen[b.dataset.laag];
+  if(b.getAttribute('aria-pressed')==='false') kaart.removeLayer(g);
+  b.addEventListener('click',()=>{
+    const aan=b.getAttribute('aria-pressed')==='true';
+    b.setAttribute('aria-pressed',String(!aan));
+    aan?kaart.removeLayer(g):kaart.addLayer(g);
+  });
+});
+
+/* ---------- categoriefilters + lijst ---------- */
+const actief=new Set(Object.keys(CATS));
+const cats=document.getElementById('cats');
+Object.entries(CATS).forEach(([k,c])=>{
+  const b=document.createElement('button');
+  b.className='tog'; b.type='button'; b.setAttribute('aria-pressed','true'); b.style.color=c.kleur;
+  b.innerHTML='<span class="punt"></span>'+c.label;
+  b.addEventListener('click',()=>{
+    actief.has(k)?actief.delete(k):actief.add(k);
+    b.setAttribute('aria-pressed',String(actief.has(k)));
+    teken();
+  });
+  cats.appendChild(b);
+});
+
+const lijst=document.getElementById('lijst'), telling=document.getElementById('telling');
+const zoek=document.getElementById('zoek');
+let timer; zoek.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(teken,160)});
+
+function teken(){
+  const q=zoek.value.trim().toLowerCase();
+  const frag=document.createDocumentFragment();
+  let n=0;
+  M.slice().sort((a,b)=>a.km-b.km).forEach(m=>{
+    const zicht=actief.has(m.c)&&(!q||(m.n+' '+m.isl+' '+m.a+' '+m.d).toLowerCase().includes(q));
+    if(!zicht){ laagMusea.removeLayer(m.marker); return; }
+    m.marker.addTo(laagMusea); n++;
+    const b=document.createElement('button');
+    b.className='item'; b.type='button';
+    const heeftVik=VIKING.some(v=>v.m===m);
+    b.innerHTML='<div class="naam">'+esc(m.n)+
+      (m.t?'<span class="merk expo">●</span>':'')+
+      (heeftVik?'<span class="merk vik">◆</span>':'')+
+      (m.w?'<span class="merk winter">❄</span>':'')+'</div>'+
+      '<div class="meta"><span class="streep" style="background:'+CATS[m.c].kleur+'"></span>'+
+      esc(m.a)+'<span class="afstand">'+m.km.toFixed(1)+' km</span></div>';
+    b.addEventListener('click',()=>{
+      dicht();
+      kaart.setView(m.ll,16,{animate:true});
+      setTimeout(()=>m.marker.openPopup(),260);
+    });
+    frag.appendChild(b);
+  });
+  lijst.replaceChildren(frag);
+  telling.textContent=n+' van '+M.length;
+}
+
+/* ---------- bottom sheet ---------- */
+const sheet=document.getElementById('sheet'), greep=document.getElementById('greep');
+const open=()=>sheet.classList.add('open'), dicht=()=>sheet.classList.remove('open');
+greep.addEventListener('click',()=>sheet.classList.toggle('open'));
+let y0=null;
+greep.addEventListener('pointerdown',e=>{y0=e.clientY;greep.setPointerCapture(e.pointerId)});
+greep.addEventListener('pointerup',e=>{
+  if(y0===null) return;
+  const dy=e.clientY-y0; y0=null;
+  if(dy<-30) open(); else if(dy>30) dicht();
+});
+zoek.addEventListener('focus',open);
+
+/* ---------- mijn positie ---------- */
+let mijnMarker=null;
+document.getElementById('hier').addEventListener('click',()=>{
+  if(!navigator.geolocation){ melding('Geolocatie niet beschikbaar'); return; }
+  melding('Positie bepalen…');
+  navigator.geolocation.getCurrentPosition(p=>{
+    const ll=[p.coords.latitude,p.coords.longitude];
+    vertrek=ll; vertrekNaam='je huidige positie';
+    if(mijnMarker) mijnMarker.setLatLng(ll);
+    else mijnMarker=L.circleMarker(ll,{radius:8,color:'#fff',weight:3,fillColor:'#1B3FA0',fillOpacity:1}).addTo(kaart);
+    M.forEach(m=>m.km=afstand(vertrek,m.ll));
+    teken(); kaart.setView(ll,14);
+    melding('Afstanden vanaf je huidige positie');
+  },()=>melding('Positie niet gevonden — afstanden blijven vanaf Mýrargata 18'),{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
+});
+
+/* ---------- posities: cache eerst, netwerk pas als het moet ---------- */
+const status=document.getElementById('status');
+const melding=t=>status.textContent=t;
+
+function leesCache(){ try{ return JSON.parse(localStorage.getItem(CACHE)||'{}'); }catch(e){ return {}; } }
+function schrijfCache(o){ try{ localStorage.setItem(CACHE,JSON.stringify(o)); }catch(e){} }
+
+function zetPositie(m,ll){
+  m.ll=ll; m.km=afstand(vertrek,ll); m.exact=true; m.marker.setLatLng(ll);
+  EXPO.forEach(e=>{ if(e.m===m&&e.ring) e.ring.setLatLng(ll); });
+  VIKING.forEach(v=>{ if(v.m===m&&v.ring) v.ring.setLatLng(ll); });
+}
+
+async function posities(forceer){
+  const cache=forceer?{}:leesCache();
+  let uitCache=0;
+  M.forEach(m=>{ if(m.g&&cache[m.g]) { zetPositie(m,cache[m.g]); uitCache++; } });
+  const todo=M.filter(m=>m.g&&!cache[m.g]);
+  teken();
+  if(!todo.length){ melding(uitCache+' posities uit het geheugen — geen netwerk nodig'); return; }
+  if(!navigator.onLine){ melding('Offline — posities bij benadering'); return; }
+  let ok=0;
+  for(let i=0;i<todo.length;i++){
+    const m=todo[i];
+    melding('Posities ophalen… '+(i+1)+'/'+todo.length+' (eenmalig)');
+    try{
+      const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(m.g));
+      const j=await r.json();
+      if(j&&j[0]){ const ll=[+j[0].lat,+j[0].lon]; cache[m.g]=ll; zetPositie(m,ll); ok++; }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,1100));
+  }
+  schrijfCache(cache); teken();
+  melding(ok+' posities opgehaald en bewaard — de volgende keer laadt dit meteen');
+}
+document.getElementById('opnieuw').addEventListener('click',()=>posities(true));
+
+/* ---------- resize ---------- */
+let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>kaart.invalidateSize(),200)},{passive:true});
+sheet.addEventListener('transitionend',()=>kaart.invalidateSize());
+
+teken();
+posities(false);
+}
+</script>
+</body>
+</html>
