@@ -6,19 +6,23 @@
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light">
 <meta name="description" content="Interactieve kaart van de musea, tentoonstellingen en vikinglocaties van Reykjavík en omgeving.">
-<meta property="og:title" content="Musea Reykjavík">
+<meta property="og:title" content="Rey 6 tot 11 nov">
 <meta property="og:description" content="Interactieve kaart van musea, tentoonstellingen en vikinglocaties in en rond Reykjavík.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B3FA0'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%23fff' stroke-width='2.5'/%3E%3C/svg%3E">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Musea Reykjavík</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rey 6 tot 11 nov">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Rey 6 tot 11 nov</title>
 <link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
 <link rel="preconnect" href="https://b.basemaps.cartocdn.com" crossorigin>
 <link rel="preconnect" href="https://c.basemaps.cartocdn.com" crossorigin>
 <link rel="preconnect" href="https://d.basemaps.cartocdn.com" crossorigin>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link id="lcss" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      onerror="this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'">
 <style>
 :root{
   --inkt:#171A1F; --papier:#EEF1F4; --paneel:#FFF; --steen:#6E7684;
@@ -129,7 +133,7 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 <div id="kaart"></div>
 
 <header id="kop">
-  <h1>Musea Reykjavík <span>· 6–11 nov 2026</span></h1>
+  <h1>Rey 6 tot 11 nov <span>· 2026</span></h1>
   <div id="lagen">
     <button class="tog" data-laag="musea" aria-pressed="true"><span class="punt" style="background:#171A1F"></span>Musea</button>
     <button class="tog" data-laag="expo" aria-pressed="true"><span class="punt" style="background:#B36A15"></span>Expo’s</button>
@@ -351,7 +355,28 @@ const FIJN = window.matchMedia('(pointer:fine)').matches;
 const CACHE='rvk-coords-v2';
 let vertrek=THUIS.slice(), vertrekNaam='Mýrargata 18';
 
-window.addEventListener('load',start);
+/* Leaflet laden met reservebron; pas daarna starten */
+function laadLeaflet(klaar){
+  if(window.L) return klaar();
+  const bronnen=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+                 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'];
+  (function volgende(i){
+    if(i>=bronnen.length){
+      document.getElementById('status').textContent=
+        'De kaartbibliotheek kon niet geladen worden. Controleer de verbinding en herlaad de pagina.';
+      document.getElementById('kaart').style.display='none';
+      document.getElementById('sheet').classList.add('open');
+      return;
+    }
+    const s=document.createElement('script');
+    s.src=bronnen[i]; s.async=false;
+    s.onload=klaar; s.onerror=()=>volgende(i+1);
+    document.head.appendChild(s);
+  })(0);
+}
+if(document.readyState==='loading')
+  document.addEventListener('DOMContentLoaded',()=>laadLeaflet(start));
+else laadLeaflet(start);
 
 function start(){
 /* ---------- kaart ---------- */
@@ -360,10 +385,22 @@ const kaart=L.map('kaart',{
   zoomSnap:.5, tap:false
 }).setView([64.1465,-21.9400],13);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-  maxZoom:19, minZoom:8, updateWhenIdle:false, updateWhenZooming:false, keepBuffer:2, crossOrigin:true,
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-}).addTo(kaart);
+const OSM_ATTR='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const tegelOpties={maxZoom:19, minZoom:8, updateWhenIdle:false, updateWhenZooming:false, keepBuffer:2};
+let tegels=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  Object.assign({},tegelOpties,{attribution:OSM_ATTR+' &copy; <a href="https://carto.com/attributions">CARTO</a>'})).addTo(kaart);
+
+/* valt CARTO weg, dan de standaardtegels van OpenStreetMap */
+let fouten=0, gewisseld=false;
+tegels.on('tileerror',()=>{
+  if(gewisseld || ++fouten<5) return;
+  gewisseld=true;
+  kaart.removeLayer(tegels);
+  tegels=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    Object.assign({},tegelOpties,{attribution:OSM_ATTR})).addTo(kaart);
+  tegels.on('tileerror',()=>melding('Achtergrondkaart niet bereikbaar — markers en lijst werken wel'));
+  melding('Achtergrondkaart via OpenStreetMap');
+});
 
 const laagMusea=L.layerGroup().addTo(kaart);
 const laagExpo =L.layerGroup().addTo(kaart);
