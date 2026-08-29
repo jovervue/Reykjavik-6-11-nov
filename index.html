@@ -38,20 +38,36 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 /* ---- kop ---- */
 #kop{
   position:fixed;top:0;left:0;right:0;z-index:900;background:var(--paneel);
-  border-bottom:1px solid var(--rand);padding:calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+  border-bottom:1px solid var(--rand);padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;
 }
-#kop h1{font-size:16px;margin:0 0 6px;font-weight:700;letter-spacing:-.01em}
+#kop h1{font-size:15px;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
 #kop h1 span{font-weight:400;color:var(--steen);font-size:13px}
-#lagen{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-#lagen::-webkit-scrollbar{display:none}
+#lagen{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .tog{
-  flex:none;border:1px solid var(--rand);background:var(--paneel);color:var(--steen);
-  padding:7px 12px;border-radius:999px;font:inherit;font-size:13px;min-height:36px;cursor:pointer;
-  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  position:relative;border:1px solid var(--rand);background:var(--paneel);color:var(--steen);
+  padding:11px 4px 10px;border-radius:10px;font:inherit;font-size:13.5px;font-weight:500;
+  letter-spacing:-.01em;min-height:44px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;line-height:1;overflow:hidden;
+  transition:color .14s,background .14s,border-color .14s;
 }
-.tog .punt{width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
-.tog[aria-pressed="true"]{color:var(--inkt);border-color:currentColor;background:rgba(23,26,31,.05);font-weight:600}
-.tog[aria-pressed="false"]{opacity:.5}
+.tog::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:var(--laagkleur,var(--inkt));opacity:.22;transition:opacity .14s,height .14s;
+}
+.tog[aria-pressed="true"]{
+  color:var(--laagkleur,var(--inkt));
+  background:color-mix(in srgb,var(--laagkleur,var(--inkt)) 9%,var(--paneel));
+  border-color:color-mix(in srgb,var(--laagkleur,var(--inkt)) 38%,var(--paneel));
+  font-weight:600;
+}
+.tog[aria-pressed="true"]::before{opacity:1;height:4px}
+.tog:active{transform:scale(.975)}
+.tog[data-laag="musea"]{--laagkleur:#1B3FA0}
+.tog[data-laag="expo"]{--laagkleur:#B36A15}
+.tog[data-laag="vik"]{--laagkleur:#6B3FA0}
+.tog[data-laag="eten"]{--laagkleur:#B03030}
+.tog[data-laag="bier"]{--laagkleur:#7A5A1E}
+.tog[data-laag="wink"]{--laagkleur:#2F7A6B}
 
 /* ---- kaart ---- */
 #kaart{position:fixed;inset:0;background:#DCE3E8;z-index:1}
@@ -67,27 +83,30 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 }
 #sheet.open{transform:translateY(0)}
 #greep{padding:8px 14px 10px;flex:none;cursor:grab}
-#greep .bar{width:38px;height:4px;border-radius:2px;background:var(--rand);margin:0 auto 8px}
+#greep .bar{width:44px;height:5px;border-radius:2px;background:var(--rand);margin:0 auto 8px}
 #greep .rij{display:flex;align-items:center;gap:10px}
-#greep .titel{font-weight:600;font-size:14px}
-#greep .telling{color:var(--steen);font-size:13px;margin-left:auto;font-variant-numeric:tabular-nums}
+#greep .titel{font-weight:700;font-size:15px}
+#greep .telling{color:var(--steen);font-size:13.5px;margin-left:auto;font-variant-numeric:tabular-nums}
 #zoek{
   margin:0 14px 8px;padding:10px 12px;border-radius:9px;border:1px solid var(--rand);
   background:var(--papier);color:var(--inkt);font:inherit;font-size:16px;flex:none;
 }
 #zoek:focus{outline:2px solid var(--aalto);outline-offset:1px}
-#cats{display:flex;gap:6px;overflow-x:auto;padding:0 14px 8px;flex:none;scrollbar-width:none}
-#cats::-webkit-scrollbar{display:none}
 #lijst{overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;padding-bottom:20px;overscroll-behavior:contain}
 .item{
   width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--rand);
-  color:inherit;font:inherit;padding:12px 14px;min-height:58px;display:block;cursor:pointer;
+  color:inherit;font:inherit;padding:13px 14px;min-height:64px;cursor:pointer;
+  display:flex;align-items:center;gap:12px;
 }
 .item:active{background:rgba(27,63,160,.08)}
-.item .naam{font-weight:600;font-size:14.5px;line-height:1.25}
-.item .meta{color:var(--steen);font-size:12px;margin-top:3px;display:flex;gap:8px;align-items:center}
+.item .ico{font-size:20px;flex:none;width:26px;text-align:center}
+.item .tekst{flex:1;min-width:0;display:block}
+.item .naam{font-weight:600;font-size:15px;line-height:1.25;display:block}
+.item .meta{color:var(--steen);font-size:12.5px;margin-top:3px;display:flex;gap:7px;align-items:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item .streep{width:3px;height:12px;border-radius:2px;flex:none}
-.item .afstand{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+.item .afstand{flex:none;font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;color:var(--steen)}
+.item .afstand small{font-size:10.5px;font-weight:400;display:block;text-align:right;margin-top:-2px}
 .merk{margin-left:5px;font-size:11px}
 .merk.expo{color:var(--geo)} .merk.vik{color:var(--viking)} .merk.winter{color:var(--aalto)}
 #voet{padding:14px;color:var(--steen);font-size:11.5px;border-top:1px solid var(--rand)}
@@ -108,6 +127,8 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 .leaflet-control-attribution{background:rgba(255,255,255,.82)!important;color:var(--steen)!important;font-size:10px!important}
 .leaflet-bottom.leaflet-right{margin-bottom:calc(var(--peek) - 8px)}
 .leaflet-control-zoom{display:none}
+.gv{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:17px;
+  background:var(--paneel);border:2.5px solid #B03030;border-radius:50%;box-shadow:0 1px 4px rgba(23,26,31,.35);line-height:1}
 .marker{width:26px;height:26px;display:flex;align-items:center;justify-content:center}
 .marker i{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(23,26,31,.4);display:block}
 .marker.thuis i{width:15px;height:15px;border-radius:3px;transform:rotate(45deg)}
@@ -117,6 +138,7 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
   box-shadow:0 2px 10px rgba(23,26,31,.16);cursor:pointer;line-height:1;
 }
 @media (min-width:900px){
+  #lagen{grid-template-columns:repeat(6,minmax(0,100px))}
   :root{--sheet:100dvh}
   #sheet{left:auto;right:0;top:0;width:380px;height:100dvh;border-radius:0;border-left:1px solid var(--rand);border-top:0;transform:none;box-shadow:none;padding-top:64px}
   #greep .bar{display:none}
@@ -135,9 +157,12 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 <header id="kop">
   <h1>Rey 6 tot 11 nov <span>· 2026</span></h1>
   <div id="lagen">
-    <button class="tog" data-laag="musea" aria-pressed="true"><span class="punt" style="background:#171A1F"></span>Musea</button>
-    <button class="tog" data-laag="expo" aria-pressed="true"><span class="punt" style="background:#B36A15"></span>Expo’s</button>
-    <button class="tog" data-laag="vik" aria-pressed="false"><span class="punt" style="background:#6B3FA0"></span>Viking</button>
+    <button class="tog" data-laag="musea" aria-pressed="true">Musea</button>
+    <button class="tog" data-laag="expo" aria-pressed="true">Expo’s</button>
+    <button class="tog" data-laag="vik" aria-pressed="false">Viking</button>
+    <button class="tog" data-laag="eten" aria-pressed="false">Eten</button>
+    <button class="tog" data-laag="bier" aria-pressed="false">Bier</button>
+    <button class="tog" data-laag="wink" aria-pressed="false">Winkels</button>
   </div>
 </header>
 
@@ -146,15 +171,14 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 <section id="sheet" aria-label="Lijst met locaties">
   <div id="greep">
     <div class="bar"></div>
-    <div class="rij"><span class="titel">Locaties</span><span class="telling" id="telling"></span></div>
+    <div class="rij"><span class="titel">Lijst</span><span class="telling" id="telling"></span></div>
   </div>
   <input id="zoek" type="search" placeholder="Zoek op naam of adres" aria-label="Zoeken" enterkeyhint="search">
-  <div id="cats"></div>
   <div id="lijst"></div>
   <div id="voet">
     <div id="status">Posities laden…</div>
     <button id="opnieuw" type="button">Posities opnieuw ophalen</button>
-    <div style="margin-top:6px">❄ beperkt open in de winter · ● tentoonstelling · ◆ vikingtijd<br>
+    <div style="margin-top:6px">❄ beperkt open in de winter · ● tentoonstelling · ◆ vikingtijd<br>Tik een knop bovenaan om een laag aan of uit te zetten<br>
     Kaart © OpenStreetMap, © CARTO · afstanden hemelsbreed</div>
   </div>
 </section>
@@ -181,6 +205,9 @@ const M = [
   d:"Het enige gebouw van Alvar Aalto in IJsland. Blauw keramisch dak, centrale lichtkoker in de bibliotheek, alle meubels en lampen van Aalto zelf. 30.000+ titels in zeven Noordse talen.",
   u:"https://nordichouse.is/en/", w:"Di–zo 10–17u, maandag gesloten."},
 
+ {n:"Ásmundarsalur", isl:"Beste galerie volgens Grapevine", c:"kunst", g:"Freyjugata 41, Reykjavík", ll:[64.1420,-21.9280],
+  a:"Freyjugata 41", d:"Kunsthal met wisselende exposities; beneden een filiaal van Reykjavík Roasters. Niet te verwarren met Ásmundarsafn.",
+  u:"https://asmundarsalur.is", vfl:true},
  {n:"Marshallhúsið", isl:"Nýlistasafnið, Kling & Bang, Þula, i8 Grandi", c:"kunst", g:"Marshallhúsið, Reykjavík", ll:[64.1546,-21.9550],
   a:"Grandagarður 20, Grandi", d:"Oude visfabriek uit 1948, nu vier kunstruimtes onder één dak plus het atelier van Ólafur Elíasson en restaurant La Primavera. Tien minuten wandelen van jullie logement.",
   u:"https://i8.is/about", vfl:true},
@@ -350,6 +377,80 @@ const VIKING = [
  {plek:"Árbæjarsafn", info:"Geen vikingtijd, maar wel een gereconstrueerde turfhoeve die de bouwtraditie toont die uit die periode stamt."}
 ];
 
+/* ---------- laag 4: Best of Reykjavík (The Reykjavík Grapevine) ---------- */
+const GV = [
+ // eten
+ {n:"Skál!", k:"eten", pr:"Beste restaurant van het jaar", g:"Njálsgata 1, Reykjavík", ll:[64.1432,-21.9248],
+  a:"Njálsgata 1", d:"Bekroonde bar-bistro met innovatieve IJslandse gerechten: seizoensgebonden kleine borden om te delen, natuurwijn. Michelin Bib Gourmand 2019. LET OP: na zeven jaar in de Hlemmur-foodhal verhuisd naar Njálsgata 1 — ga dus niet naar Hlemmur.", ok:true},
+ {n:"Le Kock", k:"eten", pr:"Beste burger", g:"Tryggvagata 12, Reykjavík", ll:[64.1489,-21.9430],
+  a:"Tryggvagata 12", d:"Al jaren onverslaanbaar voor ambachtelijke burgers. Bakkerij Deig zit in hetzelfde pand.", ok:true},
+ {n:"Reykjavík Roasters — Kárastígur", k:"eten", pr:"Koffiebranderij, sinds 2008", g:"Kárastígur 1, Reykjavík", ll:[64.1436,-21.9280],
+  a:"Kárastígur 1, bij Hallgrímskirkja", d:"De oorspronkelijke zaak, geopend eind 2008 als Kaffismiðja Íslands en in 2013 hernoemd. Het pand uit 1929 was vroeger half kruidenierswinkel, half melkwinkel waar je skyr per gewicht kocht. Klein, weinig zitplaatsen — vooral afhalen.",
+  o:"Dagelijks 7–18u", u:"https://reykjavikroasters.is/en/", ok:true},
+ {n:"Reykjavík Roasters — Brautarholt", k:"eten", pr:"Koffiebranderij met brew bar", g:"Brautarholt 2, Reykjavík", ll:[64.1400,-21.9090],
+  a:"Brautarholt 2, 105 Reykjavík", d:"Tweede zaak, open sinds augustus 2015 in de oude muziekwinkel van Japis. Brew bar met wisselende koffies en thee, met de hand gezet per bestelling. Ruim, veel zitplaatsen, ontbijt en gebak.",
+  o:"Dagelijks 7–18u", u:"https://reykjavikroasters.is/en/", ok:true},
+ {n:"Reykjavík Roasters — Ásmundarsalur", k:"eten", pr:"Koffie in de galerie", g:"Freyjugata 41, Reykjavík", ll:[64.1420,-21.9280],
+  a:"Freyjugata 41, in Ásmundarsalur", d:"Derde filiaal, op de begane grond van de kunsthal Ásmundarsalur met een terras. Koffie en tentoonstelling in één bezoek.",
+  o:"Ma–vr 8.30–16u · za–zo 9–17u", u:"https://reykjavikroasters.is/en/", ok:true},
+ {n:"Deig", k:"eten", pr:"Voor vroege vogels", g:"Tryggvagata 12, Reykjavík", ll:[64.1489,-21.9430],
+  a:"Tryggvagata 12, in Le Kock", d:"Donuts, bagels en bagelsandwiches met Amerikaanse inslag, in hetzelfde pand als Le Kock. Een van de goedkoopste koffies van de stad; op weekdagen na 10u het Poorman-menu (bagel met roomkaas, gebakje en drank).",
+  u:"https://deig.is", ok:true},
+ {n:"BakaBaka", k:"eten", pr:"Beste bakkerij", g:"Bankastræti 2, Reykjavík", ll:[64.1470,-21.9350],
+  a:"Bankastræti 2", d:"Uitstekende lokale bakkerij en ontbijtadres: zuurdesem, kardemombroodjes en croissants, in het huis van de allereerste bakkerij van IJsland (1834). Vanaf 17u pizzeria en wijnbar.", ok:true},
+ {n:"Skreið", k:"eten", pr:"Beste nieuwkomer", g:"Laugavegur 4, Reykjavík", ll:[64.1471,-21.9328],
+  a:"Laugavegur 4", d:"Sfeervolle culinaire hotspot in het centrum. Vín, tapas & verslun: Baskische keuken in een oud houten huis, kleine gerechten om te delen. Bekend om de Baskische cheesecake.",
+  o:"Ma–di 17–23u · wo–do 15–23u · vr–za 15–24u · zo 15–23u", u:"https://skreid.is/", ok:true},
+ {n:"Kaffi Laugalækur", k:"eten", pr:"Beste verborgen parel", g:"Laugarnesvegur 74a, Reykjavík", ll:[64.1447,-21.8965],
+  a:"Laugarnesvegur 74a, Laugarnes", d:"Populaire buurtspot in wijk 105, geliefd bij gezinnen om de zuurdesempizza\u2019s (flatbakes). Buurtcafé en gastrobar sinds 2016, ingrediënten rechtstreeks van de boer; soep, salades en veel vegan opties. Om de hoek van het grote zwembad Laugardalslaug.",
+  o:"Zo–ma 10–22u · di–za 10–23u; keuken sluit om 21u", u:"https://www.kaffilaugalaekur.is/", ok:true},
+ {n:"La Poblana", k:"eten", pr:"Beste vegan opties", g:"Laugavegur 12, Reykjavík", ll:[64.1428,-21.9219],
+  a:"Laugavegur 12, tweede verdieping", d:"Tacos in de stijl van Mexico-Stad, met IJslandse groenten en kruiden. Begonnen in 2017 in Hlemmur Mathöll, sinds kort op Laugavegur 12.",
+  o:"Zo–do 12–21u · vr–za 12–22u", u:"https://www.lapoblana.is/", ok:true},
+ // drinken
+ {n:"Skúli Craft Bar", k:"drank", pr:"Beste speciaalbier", g:"Aðalstræti 9, Reykjavík", ll:[64.1476,-21.9425],
+  a:"Aðalstræti 9", d:"Genoemd naar Skúli Magnússon, stichter van de stad. Veertien wisselende tapkranen en zo'n 130 flesbieren, met nadruk op kleine IJslandse brouwerijen. Terras aan het pleintje dat ooit het eerste kerkhof van Reykjavík was.",
+  o:"Happy hour 12–19u", u:"https://www.skulicraftbar.is", ok:true},
+ {n:"Prikið", k:"drank", pr:"Beste instituut", g:"Bankastræti 12, Reykjavík", ll:[64.1466,-21.9327],
+  a:"Bankastræti 12", d:"Het oudste koffiehuis van Reykjavík, open sinds 1951. Overdag koffie en een goede burger, 's avonds hiphop met lokale dj's. In het weekend lange rijen.",
+  o:"Happy hour 16–20u", u:"https://www.prikid.is", ok:true},
+ // winkelen
+ {n:"Handprjónasamband Íslands", k:"winkel", pr:"Beste lopapeysa", g:"Skólavörðustígur 19, Reykjavík", ll:[64.1444,-21.9269],
+  a:"Skólavörðustígur 19", d:"Opgericht in november 1977 door honderden breiers, vooral vrouwen, die hun werk voortaan zelf wilden verkopen. Alles met de hand gebreid uit IJslandse wol. Tweede winkel op Borgartún 31.",
+  o:"Ma–vr 10–18u · za 11–17u · zo 8–16u", u:"https://handknitted.is/", ok:true},
+ {n:"Smekkleysa", k:"winkel", pr:"Beste platenzaak", g:"Hverfisgata 32, Reykjavík", ll:[64.1462,-21.9315],
+  a:"Hverfisgata 32 (ook via Hjartatorg)", d:"Bad Taste, het label uit 1986 van o.a. Björk en de Sugarcubes. Platen beneden, café boven, soms concerten.", ok:true},
+ {n:"Kormákur & Skjöldur", k:"winkel", pr:"Beste design & kleding", g:"Laugavegur 59, Reykjavík", ll:[64.1436,-21.9243],
+  a:"Laugavegur 59 (kelder van Kjörgarður)", d:"Herrafataverslun Kormáks & Skjaldar: klassieke herenmode en IJslandse tweedkleding, sinds 1996 in de kelder. Pakken, hemden, jassen. Voelt aan als een tijdcapsule; er is zelfs een kapper in de zaak.",
+  o:"Ma–za 11–18u · zo 12–17u", u:"https://herrafataverslun.is/en/pages/about-us-en", ok:true},
+ {n:"Góði Hirðirinn", k:"winkel", pr:"Beste vintage", g:"Köllunarklettsvegur 1, Reykjavík", ll:[64.1490,-21.8790],
+  a:"Köllunarklettsvegur 1, 104 Reykjavík", d:"Kringloopwarenhuis van afvalbedrijf SORPA; de opbrengst gaat naar goede doelen. LET OP: verhuisd — de winkels aan Fellsmúli en Hverfisgata zijn gesloten en samengevoegd in de oude kartonfabriek aan Köllunarklettsvegur, twee keer zo groot als vroeger.",
+  u:"https://godihirdirinn.is/", ok:true}
+];
+const GVK = {eten:{l:"Eten",e:"🍽️"},drank:{l:"Bar",e:"🍻"},winkel:{l:"Winkel",e:"🛍️"}};
+
+/* ---------- laag 6: lokale brouwerijen ---------- */
+const BIER = [
+ {n:"Bryggjan Brugghús", g:"Grandagarður 8, Reykjavík", ll:[64.1524,-21.9490],
+  a:"Grandagarður 8, oude haven", d:"Zelfstandige brouwerij, bistro en bar aan de oude haven, sinds 2015. Twaalf tapkranen met bier dat rechtstreeks uit de eigen ketels komt, en uitzicht op de jachthaven. Er zijn rondleidingen van drie uur met proeverij en diner. Op wandelafstand van jullie logement.",
+  u:"https://bryggjanbrugghus.is"},
+ {n:"Ægir Brugghús — Grandi", g:"Eyjarslóð 5, Reykjavík", ll:[64.1548,-21.9580],
+  a:"Eyjarslóð 5, Grandi", d:"Brouwerij uit 2017 in de Grandi-wijk. Naast het eigen bier brouwen ze ook voor andere labels en verhuren ze de installatie aan brouwers zonder eigen ketel.",
+  u:"https://www.aegirbrugghus.is/en"},
+ {n:"Ægir 101 taproom", g:"Laugavegur 2, Reykjavík", ll:[64.1470,-21.9337],
+  a:"Laugavegur 2, hoek Skólavörðustígur", d:"De proeflokaal van Ægir in het centrum, met het volledige assortiment op de kaart. Tweede taproom in Hafnarfjörður.",
+  u:"https://www.aegirbrugghus.is/en"},
+ {n:"RVK Brewing Co", g:"Skipholt 33, Reykjavík", ll:[64.1382,-21.8988],
+  a:"Skipholt 33, 105 Reykjavík", d:"Opgericht door Siggi, die na jaren in de New Yorkse financiële sector voor bier koos. Brouwerij met taproom; groepen kunnen een proeverij boeken.",
+  o:"Zo–wo 15–22u · do 13–23u · vr–za 13–24u", u:"https://www.rvkbrewing.com/"},
+ {n:"Borg Brugghús", g:"Grjótháls 7, Reykjavík", ll:[64.1130,-21.8100],
+  a:"Grjótháls 7–11, industriezone Árbær", d:"De bekendste IJslandse ambachtelijke brouwerij (Úlfur, Garún, Snorri), onderdeel van Ölgerðin. Ligt in een industriezone ver buiten het centrum — hun bier drink je makkelijker in een bar in de stad.",
+  u:"https://borgbrugghus.is"},
+ {n:"Kaldi Bar", g:"Laugavegur 20b, Reykjavík", ll:[64.1450,-21.9284],
+  a:"Laugavegur 20b", d:"Café van brouwerij Kaldi uit Árskógssandur in het noorden, de eerste microbrouwerij van IJsland (2006). Alle Kaldi-bieren op tap.",
+  u:"https://kaldibar.is"}
+];
+
 const THUIS=[64.1512,-21.9470];
 const FIJN = window.matchMedia('(pointer:fine)').matches;
 const CACHE='rvk-coords-v2';
@@ -405,6 +506,9 @@ tegels.on('tileerror',()=>{
 const laagMusea=L.layerGroup().addTo(kaart);
 const laagExpo =L.layerGroup().addTo(kaart);
 const laagVik  =L.layerGroup();
+const laagEten =L.layerGroup();
+const laagWink =L.layerGroup();
+const laagBier =L.layerGroup();
 
 /* ---------- helpers ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -461,8 +565,46 @@ VIKING.forEach(v=>{
     '<div class="pop-adres">'+esc(m.a)+'</div><div>'+esc(v.info)+'</div>').addTo(laagVik);
 });
 
+/* Best of Reykjavík-markers */
+GV.forEach(p=>{
+  p.km=afstand(vertrek,p.ll);
+  p.marker=L.marker(p.ll,{
+      icon:L.divIcon({className:'',html:'<div class="gv" style="border-color:'+(p.k==='winkel'?'#2F7A6B':'#B03030')+'">'+GVK[p.k].e+'</div>',iconSize:[32,32],iconAnchor:[16,16]}),
+      title:p.n})
+    .addTo(p.k==='winkel'?laagWink:laagEten)
+    .bindPopup(()=>'<div class="pop-cat">Best of Reykjavík · '+GVK[p.k].l+'</div>'+
+      '<div class="pop-naam">'+esc(p.n)+'</div>'+
+      '<div class="pop-isl">'+esc(p.pr)+'</div>'+
+      '<div class="pop-adres">'+esc(p.a)+' · '+p.km.toFixed(1)+' km</div>'+
+      '<div>'+esc(p.d)+'</div>'+
+      (p.o?'<div class="pop-expo">'+esc(p.o)+'</div>':'')+
+      (p.ok?'':'<div class="pop-winter">Adres niet geverifieerd — controleer de locatie voor je erheen gaat.</div>')+
+      '<div class="pop-links">'+
+      (p.u?'<a href="'+p.u+'" target="_blank" rel="noopener">Officiële website ↗</a>':'')+
+      '<a href="https://www.google.com/maps/dir/?api=1&destination='+p.ll[0]+','+p.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a>'+
+      '<a href="https://grapevine.is/best-of-reykjavik/" target="_blank" rel="noopener">Best of Reykjavík ↗</a></div>',popOpties);
+});
+
+/* Brouwerijen */
+BIER.forEach(b=>{
+  b.km=afstand(vertrek,b.ll);
+  b.marker=L.marker(b.ll,{
+      icon:L.divIcon({className:'',html:'<div class="gv" style="border-color:#7A5A1E">🍺</div>',iconSize:[32,32],iconAnchor:[16,16]}),
+      title:b.n})
+    .addTo(laagBier)
+    .bindPopup(()=>'<div class="pop-cat">Lokale brouwerij</div>'+
+      '<div class="pop-naam">'+esc(b.n)+'</div>'+
+      '<div class="pop-adres">'+esc(b.a)+' · '+b.km.toFixed(1)+' km</div>'+
+      '<div>'+esc(b.d)+'</div>'+
+      (b.o?'<div class="pop-expo">'+esc(b.o)+'</div>':'')+
+      '<div class="pop-links">'+
+      (b.u?'<a href="'+b.u+'" target="_blank" rel="noopener">Officiële website ↗</a>':'')+
+      '<a href="https://www.google.com/maps/dir/?api=1&destination='+b.ll[0]+','+b.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a></div>',popOpties);
+});
+
 /* ---------- laagknoppen ---------- */
-const groepen={musea:laagMusea,expo:laagExpo,vik:laagVik};
+const aanLagen={musea:true,expo:true,vik:false,eten:false,bier:false,wink:false};
+const groepen={musea:laagMusea,expo:laagExpo,vik:laagVik,eten:laagEten,bier:laagBier,wink:laagWink};
 document.querySelectorAll('.tog').forEach(b=>{
   const g=groepen[b.dataset.laag];
   if(b.getAttribute('aria-pressed')==='false') kaart.removeLayer(g);
@@ -470,24 +612,12 @@ document.querySelectorAll('.tog').forEach(b=>{
     const aan=b.getAttribute('aria-pressed')==='true';
     b.setAttribute('aria-pressed',String(!aan));
     aan?kaart.removeLayer(g):kaart.addLayer(g);
-  });
-});
-
-/* ---------- categoriefilters + lijst ---------- */
-const actief=new Set(Object.keys(CATS));
-const cats=document.getElementById('cats');
-Object.entries(CATS).forEach(([k,c])=>{
-  const b=document.createElement('button');
-  b.className='tog'; b.type='button'; b.setAttribute('aria-pressed','true'); b.style.color=c.kleur;
-  b.innerHTML='<span class="punt"></span>'+c.label;
-  b.addEventListener('click',()=>{
-    actief.has(k)?actief.delete(k):actief.add(k);
-    b.setAttribute('aria-pressed',String(actief.has(k)));
+    aanLagen[b.dataset.laag]=!aan;
     teken();
   });
-  cats.appendChild(b);
 });
 
+/* ---------- lijst ---------- */
 const lijst=document.getElementById('lijst'), telling=document.getElementById('telling');
 const zoek=document.getElementById('zoek');
 let timer; zoek.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(teken,160)});
@@ -495,29 +625,47 @@ let timer; zoek.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeo
 function teken(){
   const q=zoek.value.trim().toLowerCase();
   const frag=document.createDocumentFragment();
-  let n=0;
-  M.slice().sort((a,b)=>a.km-b.km).forEach(m=>{
-    const zicht=actief.has(m.c)&&(!q||(m.n+' '+m.isl+' '+m.a+' '+m.d).toLowerCase().includes(q));
-    if(!zicht){ laagMusea.removeLayer(m.marker); return; }
-    m.marker.addTo(laagMusea); n++;
+  const rijen=[];
+
+  if(aanLagen.musea) M.forEach(m=>rijen.push({
+    naam:m.n, sub:m.a, km:m.km, ic:'🏛️', kleur:CATS[m.c].kleur,
+    merk:(m.t?'<span class="merk expo">●</span>':'')+(VIKING.some(v=>v.m===m)?'<span class="merk vik">◆</span>':'')+(m.w?'<span class="merk winter">❄</span>':''),
+    zoek:m.n+' '+m.isl+' '+m.a+' '+m.d, ll:m.ll, marker:m.marker
+  }));
+  if(aanLagen.bier) BIER.forEach(b=>rijen.push({
+    naam:b.n, sub:b.a, km:b.km, ic:'🍺', kleur:'#7A5A1E', merk:'',
+    zoek:b.n+' '+b.a+' '+b.d, ll:b.ll, marker:b.marker
+  }));
+  GV.forEach(p=>{
+    const laag = p.k==='winkel' ? 'wink' : 'eten';
+    if(!aanLagen[laag]) return;
+    rijen.push({naam:p.n, sub:p.pr, km:p.km, ic:GVK[p.k].e, kleur:p.k==='winkel'?'#2F7A6B':'#B03030',
+      merk:'', zoek:p.n+' '+p.a+' '+p.d+' '+p.pr, ll:p.ll, marker:p.marker});
+  });
+
+  const zichtbaar=rijen.filter(r=>!q||r.zoek.toLowerCase().includes(q));
+  if(q){
+    const set=new Set(zichtbaar.map(r=>r.marker));
+    M.forEach(m=>set.has(m.marker)?m.marker.addTo(laagMusea):laagMusea.removeLayer(m.marker));
+  } else {
+    M.forEach(m=>m.marker.addTo(laagMusea));
+  }
+  zichtbaar.sort((a,b)=>a.km-b.km).forEach(r=>{
     const b=document.createElement('button');
     b.className='item'; b.type='button';
-    const heeftVik=VIKING.some(v=>v.m===m);
-    b.innerHTML='<div class="naam">'+esc(m.n)+
-      (m.t?'<span class="merk expo">●</span>':'')+
-      (heeftVik?'<span class="merk vik">◆</span>':'')+
-      (m.w?'<span class="merk winter">❄</span>':'')+'</div>'+
-      '<div class="meta"><span class="streep" style="background:'+CATS[m.c].kleur+'"></span>'+
-      esc(m.a)+'<span class="afstand">'+m.km.toFixed(1)+' km</span></div>';
+    b.innerHTML='<span class="ico">'+r.ic+'</span>'+
+      '<span class="tekst"><span class="naam">'+esc(r.naam)+r.merk+'</span>'+
+      '<span class="meta"><span class="streep" style="background:'+r.kleur+'"></span>'+esc(r.sub)+'</span></span>'+
+      '<span class="afstand">'+r.km.toFixed(1)+'<small>km</small></span>';
     b.addEventListener('click',()=>{
       dicht();
-      kaart.setView(m.ll,16,{animate:true});
-      setTimeout(()=>m.marker.openPopup(),260);
+      kaart.setView(r.ll,16,{animate:true});
+      setTimeout(()=>r.marker.openPopup(),260);
     });
     frag.appendChild(b);
   });
   lijst.replaceChildren(frag);
-  telling.textContent=n+' van '+M.length;
+  telling.textContent=frag.childElementCount+' plekken';
 }
 
 /* ---------- bottom sheet ---------- */
@@ -543,7 +691,7 @@ document.getElementById('hier').addEventListener('click',()=>{
     vertrek=ll; vertrekNaam='je huidige positie';
     if(mijnMarker) mijnMarker.setLatLng(ll);
     else mijnMarker=L.circleMarker(ll,{radius:8,color:'#fff',weight:3,fillColor:'#1B3FA0',fillOpacity:1}).addTo(kaart);
-    M.forEach(m=>m.km=afstand(vertrek,m.ll));
+    M.concat(GV,BIER).forEach(m=>m.km=afstand(vertrek,m.ll));
     teken(); kaart.setView(ll,14);
     melding('Afstanden vanaf je huidige positie');
   },()=>melding('Positie niet gevonden — afstanden blijven vanaf Mýrargata 18'),{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
@@ -565,8 +713,9 @@ function zetPositie(m,ll){
 async function posities(forceer){
   const cache=forceer?{}:leesCache();
   let uitCache=0;
-  M.forEach(m=>{ if(m.g&&cache[m.g]) { zetPositie(m,cache[m.g]); uitCache++; } });
-  const todo=M.filter(m=>m.g&&!cache[m.g]);
+  const alles=M.concat(GV,BIER);
+  alles.forEach(m=>{ if(m.g&&cache[m.g]) { zetPositie(m,cache[m.g]); uitCache++; } });
+  const todo=alles.filter(m=>m.g&&!cache[m.g]);
   teken();
   if(!todo.length){ melding(uitCache+' posities uit het geheugen — geen netwerk nodig'); return; }
   if(!navigator.onLine){ melding('Offline — posities bij benadering'); return; }
