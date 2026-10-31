@@ -42,7 +42,7 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 }
 #kop h1{font-size:15px;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
 #kop h1 span{font-weight:400;color:var(--steen);font-size:13px}
-#lagen{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+#lagen{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .tog{
   position:relative;border:1px solid var(--rand);background:var(--paneel);color:var(--steen);
   padding:11px 4px 10px;border-radius:10px;font:inherit;font-size:13.5px;font-weight:500;
@@ -138,7 +138,7 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
   box-shadow:0 2px 10px rgba(23,26,31,.16);cursor:pointer;line-height:1;
 }
 @media (min-width:900px){
-  #lagen{grid-template-columns:repeat(6,minmax(0,100px))}
+  #lagen{grid-template-columns:repeat(8,minmax(0,100px))}
   :root{--sheet:100dvh}
   #sheet{left:auto;right:0;top:0;width:380px;height:100dvh;border-radius:0;border-left:1px solid var(--rand);border-top:0;transform:none;box-shadow:none;padding-top:64px}
   #greep .bar{display:none}
@@ -148,6 +148,66 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
   .leaflet-bottom.leaflet-right{margin-bottom:0}
 }
 @media (prefers-reduced-motion:reduce){#sheet{transition:none}}
+
+/* ---- bus-laag en vervoerpaneel ---- */
+.tog[data-laag="air"]{--laagkleur:#C2185B}
+.tog[data-actie="vervoer"]{--laagkleur:#171A1F}
+#vervoer{
+  position:fixed;left:0;right:0;bottom:0;top:var(--kopH,112px);z-index:960;
+  background:var(--papier);display:none;flex-direction:column;border-top:1px solid var(--rand);
+}
+#vervoer.open{display:flex}
+.vkopbalk{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paneel);border-bottom:1px solid var(--rand);flex:none}
+.vkopbalk strong{font-size:15px}
+#vsluit{margin-left:auto;width:44px;height:44px;border-radius:10px;border:1px solid var(--rand);background:var(--paneel);color:var(--inkt);font-size:18px;cursor:pointer}
+.vtabs{display:flex;gap:7px;padding:8px 12px;background:var(--paneel);border-bottom:1px solid var(--rand);flex:none}
+.vtab{flex:1;min-height:44px;border:1px solid var(--rand);border-radius:10px;background:var(--paneel);color:var(--steen);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.vtab[aria-pressed="true"]{color:#2A6F97;background:color-mix(in srgb,#2A6F97 9%,var(--paneel));border-color:color-mix(in srgb,#2A6F97 38%,var(--paneel));font-weight:600}
+#vinhoud{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px calc(28px + var(--safe))}
+.vk{background:var(--paneel);border:1px solid var(--rand);border-radius:12px;padding:12px 13px;margin-bottom:10px}
+.vk.eerste{border-color:#2A6F97;box-shadow:0 0 0 1px #2A6F97 inset}
+.vk.ok{border-color:#2F7A6B;box-shadow:0 0 0 1px #2F7A6B inset}
+.vk.vroeg,.vk.laat{opacity:.78}
+.vt{font-weight:700;font-size:15px;margin-bottom:8px}
+.vkop2{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--steen);margin:14px 2px 6px}
+.vform{display:flex;gap:10px;flex-wrap:wrap}
+.vform label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--steen);flex:1;min-width:120px}
+.vform input,.vform select{font:inherit;font-size:16px;color:var(--inkt);padding:10px 12px;border-radius:9px;border:1px solid var(--rand);background:var(--papier);min-height:44px}
+.vnoot{font-size:12.5px;color:var(--steen);margin-top:9px;line-height:1.4}
+.vnoot b{color:var(--inkt)}
+.vrij{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.vuur{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.vdoel{font-weight:600;font-size:14.5px}
+.vwacht{margin-left:auto;font-size:12px;color:var(--steen)}
+.vsub{font-size:13px;color:var(--steen);margin-top:6px;line-height:1.5}
+.vsub b{color:var(--inkt)}
+.vwaarsch{margin-top:8px;padding:7px 9px;border-left:2px solid var(--geo);background:rgba(179,106,21,.10);font-size:12.5px}
+.vknoppen{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.vknoppen button{flex:1;min-width:110px;min-height:44px;border:1px solid var(--rand);border-radius:10px;background:var(--paneel);color:#2A6F97;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.vtabel{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.vtabel th{font-size:11px;color:var(--steen);font-weight:500;text-align:right;padding:2px 4px 6px}
+.vtabel th:first-child,.vtabel td:first-child{text-align:left}
+.vtabel td{padding:8px 4px;border-top:1px solid var(--rand);text-align:right;vertical-align:top}
+.vtabel small{color:var(--steen);font-size:11px}
+.vlijst{margin:0;padding-left:18px;font-size:13px;line-height:1.5}
+.vlijst li{margin-bottom:5px}
+@media (min-width:900px){
+  #vervoer{right:380px}
+}
+
+.bordrij{display:flex;align-items:center;flex-wrap:wrap;gap:4px 9px;margin:7px 0 2px}
+.bord{display:inline-flex;align-items:baseline;gap:7px;background:#171A1F;color:#FFB300;border-radius:5px;padding:5px 9px;font:700 13.5px/1.1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em;box-shadow:0 0 0 1px #3A3F48 inset}
+.bord b{font-size:15px;color:#fff;background:#2A6F97;border-radius:3px;padding:2px 5px}
+.bordx{font-size:12.5px;color:var(--steen)}
+.bordnoot{font-size:12px;color:var(--steen);margin-top:6px;line-height:1.4}
+
+.airrij{font-size:13px;line-height:1.35;margin:4px 0}
+.airrij b{display:inline-block;min-width:18px;text-align:center;background:#C2185B;color:#fff;border-radius:9px;padding:0 5px;font-size:11.5px}
+.airrij.alt b{background:#8EA0A8}
+.airrij.alt{opacity:.85}
+.airtijd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+.airrij i{color:var(--steen);font-size:12px}
+.airnaar{display:block;font-size:12px;color:var(--steen);margin-left:24px}
 </style>
 </head>
 <body>
@@ -163,6 +223,8 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
     <button class="tog" data-laag="eten" aria-pressed="false">Eten</button>
     <button class="tog" data-laag="bier" aria-pressed="false">Bier</button>
     <button class="tog" data-laag="wink" aria-pressed="false">Winkels</button>
+    <button class="tog" data-laag="air" aria-pressed="false">Airwaves</button>
+    <button class="tog" data-actie="vervoer" aria-pressed="false">Vervoer</button>
   </div>
 </header>
 
@@ -178,9 +240,19 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
   <div id="voet">
     <div id="status">Posities laden…</div>
     <button id="opnieuw" type="button">Posities opnieuw ophalen</button>
-    <div style="margin-top:6px">❄ beperkt open in de winter · ● tentoonstelling · ◆ vikingtijd<br>Tik een knop bovenaan om een laag aan of uit te zetten<br>
+    <div style="margin-top:6px">❄ beperkt open in de winter · ● tentoonstelling · ◆ vikingtijd · 🚌 bushalte · 🎶 Airwaves<br>Tik een knop bovenaan om een laag aan of uit te zetten<br>
     Kaart © OpenStreetMap, © CARTO · afstanden hemelsbreed</div>
   </div>
+</section>
+
+<section id="vervoer" aria-label="Vervoer KEF en Reykjavík">
+  <div class="vkopbalk"><strong>Vervoer KEF ↔ Reykjavík</strong><button id="vsluit" type="button" aria-label="Sluiten">✕</button></div>
+  <div class="vtabs">
+    <button class="vtab" type="button" data-tab="aan" aria-pressed="true">Vr 6 nov</button>
+    <button class="vtab" type="button" data-tab="terug" aria-pressed="false">Di 10 nov</button>
+    <button class="vtab" type="button" data-tab="info" aria-pressed="false">Info</button>
+  </div>
+  <div id="vinhoud"></div>
 </section>
 
 <script>
@@ -189,7 +261,8 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
  Kaartlaag: OpenStreetMap / CARTO Positron.  Geocoding: Nominatim (OpenStreetMap),
  gebruikt volgens hun policy: max. 1 verzoek per seconde, resultaten lokaal gecached.
  Gegevens over musea: visitreykjavik.is, listasafn.is, listasafnreykjavikur.is,
- nordichouse.is, thjodminjasafn.is, borgarsogusafn.is, i8.is, vikingworld.is, landnam.is.
+ nordichouse.is, thjodminjasafn.is, borgarsogusafn.is, i8.is, vikingworld.is, landnam.is,
+ straeto.is, flybus.is, icelandairwaves.is.
 */
 const CATS = {
   kunst:   {label:"Kunst",              kleur:"#1B3FA0"},
@@ -451,6 +524,120 @@ const BIER = [
   u:"https://kaldibar.is"}
 ];
 
+/* ---------- laag 7: bushaltes (Strætó + Flybus) ---------- */
+/* Bordje zoals op de bus: lijnnummer + eindhalte. De exacte tekst op het bord publiceert Strætó niet;
+   de eindhalten komen uit de routepagina's op straeto.is. */
+const bord=(nr,naar,extra,halte)=>'<div class="bordrij"><span class="bord"><b>'+nr+'</b> '+naar+'</span>'+
+  '<span class="bordx">'+(halte?'<b>'+halte+'</b>':'')+(halte&&extra?' · ':'')+(extra||'')+'</span></div>';
+const bordenHtml=a=>a.map(x=>bord(x[0],x[1],x[2],x[3])).join('');
+/* Posities met ok:false zijn bij benadering getekend; controleer de exacte halte in de planner van straeto.is / flybus.is */
+const BUS = [
+ {id:"kef-s", n:"KEF Komur — instappen lijn 55", t:"s", ll:[63.9853,-22.6040], sub:"Lijn 55 naar Reykjavík",
+  a:"Keflavík Airport, aankomstzijde", ok:false,
+  d:"Sinds 1 okt 2026 vertrekt lijn 55 naar Reykjavík bij de nieuwe halte KEF Komur, op een aparte plek aan de aankomstzijde. De looproute vanaf de terminal is overdekt. Kjóavellir is nu de halte van lijn 89 en niet meer van lijn 55.",
+  reg:"Vr 6 nov: 16:54 (BSÍ 18:06) · 17:54 (Fjörður 18:42) · 18:54 (Fjörður 19:42). contactloos of bij de chauffeur.",
+  bord:[["55","BSÍ","rit die doorrijdt tot BSÍ"],["55","Fjörður","rit die in Hafnarfjörður eindigt"]],
+  u:"https://www.straeto.is/skipuleggja-ferd/ferdir-um-leifsstod"},
+ {id:"kef-b", n:"KEF Brottfarir — uitstappen lijn 55", t:"s", ll:[63.9851,-22.6058], sub:"Lijn 55 uit Reykjavík stopt hier",
+  a:"Keflavík Airport, vertrekzijde (bij de terminal)", ok:false,
+  d:"Lijn 55 uit Reykjavík zet je hier af, op dezelfde plek als de vliegtuigbussen. Instappen kan hier niet. Aurora Hotel ligt ± 100 m verderop. Nieuw sinds 1 okt 2026.",
+  reg:"Di 10 nov: 55 vanaf BSÍ om 16:28 (KEF 17:34), 17:28 (KEF 18:34) of 18:28 (KEF 19:34).",
+  bord:[["55","KEF – Airport","richting Keflavík"]],
+  u:"https://www.stjornarradid.is/frettir/grein/2026-09-30-umbaetur-a-adkomu-og-adstodu-fyrir-almenningsvagna-a-keflavikurflugvelli/"},
+ {id:"kef-f", n:"KEF — Flybus (aankomsthal)", t:"f", ll:[63.9846,-22.6060], sub:"Flybus naar BSÍ",
+  a:"Keflavík Airport, buiten de aankomsthal", ok:false,
+  d:"De Flybus staat buiten het terminalgebouw en vertrekt ± 35 tot 45 min na elke aankomende vlucht. Het ticket vanaf KEF is flexibel: je mag elke bus nemen.",
+  reg:"Rit ± 45 min tot BSÍ.",
+  bord:[["Flybus","Reykjavík BSÍ","richting Reykjavík · bordtekst niet bevestigd"]],
+  u:"https://flybus.is/plan-your-trip/prices/"},
+ {id:"bsi", n:"BSÍ Bus Terminal", t:"sf", ll:[64.1383,-21.9372], g:"Vatnsmýrarvegur 10, Reykjavík", sub:"Eindhalte lijn 55 + Flybus",
+  a:"Vatnsmýrarvegur 10", ok:true,
+  d:"Hier komt de Flybus aan en eindigen de vijf doorgaande ritten van lijn 55. Naar Mýrargata 18: stadsbus lijn 14 of 15 (volgens Moovit, geschat 10 tot 15 min, niet bevestigd), te voet ± 25 min (1,7 km) of taxi ± 5 min. Volgens flybus.is is er een Flybus-loket (06:00–22:00) en bagageopslag.",
+  reg:"Terug naar KEF vanaf BSÍ: Strætó 55 om 16:28, 17:28 of 18:28 (laatste doorgaande rit) · Flybus om de 30 tot 60 min tot 22:30.",
+  bord:[["55","KEF – Airport","richting Keflavík"],["Flybus","KEF Airport","bordtekst niet bevestigd; personeel wijst de juiste bus aan"],["14","Grandi","richting appartement (afgeleid)","Uitstappen: halte Mýrargata"],["15","Vesturbær","richting appartement (afgeleid)","Uitstappen: halte Mýrargata"]],
+  u:"https://flybus.is/plan-your-trip/bsi-bus-terminal/"},
+ {id:"fjo", n:"Fjörður (Hafnarfjörður)", t:"s", ll:[64.0677,-21.9633], sub:"Overstap lijn 55 ↔ lijn 1",
+  a:"Hafnarfjörður", ok:false,
+  d:"Veel ritten van lijn 55 beginnen en eindigen hier in plaats van in BSÍ. Van hieruit rijdt lijn 1 naar het centrum van Reykjavík.",
+  reg:"6 nov: 17:54-rit hier om 18:42, 18:54-rit om 19:42. 10 nov: 55 vertrekt hier om 19:50 naar KEF (aankomst 20:33).",
+  bord:[["1","Skúlagata","richting centrum Reykjavík","Uitstappen: Skúlagata, ± 15 min lopen naar het appartement"],["55","KEF – Airport","richting Keflavík"]],
+  u:"https://www.straeto.is/skipuleggja-ferd/timatoflur/hofudborgarsvaedid/leid-1"},
+ {id:"sku", n:"Skúlagata — lijn 1", t:"s", ll:[64.1490,-21.9215], sub:"Stadshalte lijn 1 · ± 15 min lopen",
+  a:"Skúlagata, Reykjavík", ok:false,
+  d:"Volgens de eerdere planning stap je hier in of uit lijn 1 en wandel je ± 15 min naar het appartement. De rittijd van lijn 1 tussen Fjörður en Skúlagata is niet bevestigd (schatting 35 tot 45 min).",
+  reg:"Controleer de verbinding voor 6 en 10 nov in de planner op straeto.is.",
+  bord:[["1","Hfj. Skarðshlíð","richting Hafnarfjörður","Instappen: Skúlagata, ± 15 min lopen van het appartement"]],
+  u:"https://www.straeto.is/skipuleggja-ferd/timatoflur/hofudborgarsvaedid/leid-1"},
+ {id:"myr", n:"Mýrargata — halte bij het logement", t:"s", ll:[64.1508,-21.9452], sub:"Lijnen 14, 13, 15 (volgens Moovit)",
+  a:"Mýrargata, Reykjavík", ok:false,
+  d:"Halte op 1 tot 2 min lopen van Mýrargata 18. Volgens Moovit stoppen hier de lijnen 14, 13 en 15; lijn 14 en 15 stoppen ook bij BSÍ. Dat lijn 1 hier stopt is niet bevestigd.",
+  reg:"Stadsbus vanaf BSÍ: lijn 14 of 15 (geschat 10 tot 15 min, controleer rittijd en frequentie in de planner op straeto.is).",
+  bord:[["14","Grandi","komt uit BSÍ (afgeleid)","Uitstappen: halte Mýrargata, 1 tot 2 min van nr. 18"],["15","Vesturbær","komt uit BSÍ (afgeleid)","Uitstappen: halte Mýrargata, 1 tot 2 min van nr. 18"]],
+  u:"https://www.straeto.is/skipuleggja-ferd"},
+ {id:"fbp", n:"Flybus+ halte — Sjóminjasafnið", t:"f", ll:[64.1525,-21.9488], sub:"Flybus+ ophalen en afzetten",
+  a:"Grandagarður 8, bij het Maritiem Museum", ok:false,
+  d:"Toeristenhalte 15 (Vesturbugt, Mýrargata) is volgens Guide to Iceland tijdelijk verplaatst naar de voorkant van het Sjóminjasafnið, ook halte 17 genoemd. Controleer de actuele halte bij het boeken op flybus.is.",
+  reg:"Op 6 nov zet de Flybus+-minibus je hier af.",
+  bord:[["Flybus+","BSÍ","minibus; bordtekst niet bevestigd","Ophalen en afzetten: halte Sjóminjasafnið, ± 200 m van het appartement"]],
+  u:"https://busstop.is/"},
+ {id:"aur", n:"Aurora Hotel (Blikavöllur 2)", t:"h", ll:[63.9862,-22.6068], sub:"Verblijf 10 → 11 nov",
+  a:"Blikavöllur 2, 235 Reykjanesbær", ok:false,
+  d:"± 100 m van de KEF-terminal. Vanaf de terminal te voet via het vertrekgebied. Opgegeven aankomsttijd 21:00, telefoon +354 595 1900. Vlucht HV9122 vertrekt wo 11 nov om 10:20, rond 08:00 inchecken."}
+];
+
+/*PURE-START*/
+/* tijdtabel lijn 55, werkdagen, geldig vanaf 02.01.2026 (straeto.is)
+   K = vertrek KEF, aankomst Fjörður, aankomst BSÍ (null = rit eindigt in Fjörður)
+   B = vertrek BSÍ (null = rit begint in Fjörður), vertrek Fjörður, aankomst KEF */
+const T55K=[["06:27","07:16","07:39"],["07:54","08:43","09:06"],["09:54","10:42",null],["11:54","12:42",null],["13:54","14:42",null],["14:54","15:43","16:06"],["15:54","16:43","17:06"],["16:54","17:43","18:06"],["17:54","18:42",null],["18:54","19:42",null],["20:54","21:42",null],["22:54","23:42",null]];
+const T55B=[["06:28","06:50","07:34"],["08:28","08:50","09:34"],[null,"10:50","11:33"],[null,"12:50","13:33"],[null,"14:50","15:33"],[null,"15:50","16:33"],["16:28","16:50","17:34"],["17:28","17:50","18:34"],["18:28","18:50","19:34"],[null,"19:50","20:33"],[null,"21:50","22:33"],[null,"23:50","00:33"]];
+const tm=s=>{const p=s.split(':');return (+p[0])*60+(+p[1]);};
+const ts=n=>{n=((Math.round(n)%1440)+1440)%1440;return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');};
+function mono(r){let p=-1;return r.map(x=>{if(x==null) return null;let v=tm(x);while(v<p) v+=1440;p=v;return v;});}
+const RIT_K=T55K.map(mono), RIT_B=T55B.map(mono);
+
+/* Alleen handbagage: ± 25 min van landing tot buiten bij de halte */
+const NAAR_BUITEN=25;
+
+/* Aankomst op KEF: welke Strætó-ritten haal je, en wanneer ben je bij het appartement?
+   Vanaf BSÍ: te voet (± 25 min), stadsbus lijn 14 of 15 (geschat 10 tot 15 min rit + wachttijd) of taxi.
+   Vanaf Fjörður: lijn 1 naar Skúlagata (geschat 35 tot 45 min) en ± 15 min lopen. */
+function berekenAankomst(landStr){
+  const land=tm(landStr), buiten=land+NAAR_BUITEN, ritten=[];
+  RIT_K.forEach(r=>{
+    if(r[0]<buiten+5) return;
+    const bsi=r[2]!=null, aan=bsi?r[2]:r[1];
+    ritten.push({dep:r[0],halte:bsi?'BSÍ':'Fjörður',aan:aan,wacht:r[0]-buiten,bsi:bsi,
+      voet:bsi?aan+25:null,
+      stad:bsi?[aan+17,aan+32]:null,
+      taxi:bsi?aan+10:null,
+      thuis:bsi?null:[aan+53,aan+63],
+      laat:!bsi&&aan>=21*60});
+  });
+  return {buiten:buiten, ritten:ritten.slice(0,4),
+    flybus:{vertrek:[land+35,land+45], bsi:[land+80,land+90], voet:[land+105,land+115],
+            stad:[land+97,land+122], plus:[land+115,land+130]}};
+}
+
+/* Terugweg naar het hotel bij KEF, vertrek vanaf BSÍ.
+   Ritten die in Fjörður starten (BSÍ-kolom leeg) vallen weg. Vertrek appartement:
+   te voet naar BSÍ = 25 min + marge (38 min), stadsbus lijn 14 of 15 = 2 min lopen + wachttijd + rit + marge (50 min). */
+function berekenTerug(vanStr,totStr){
+  const van=tm(vanStr), tot=tm(totStr), ritten=[];
+  RIT_B.forEach(r=>{
+    if(r[0]==null) return;
+    const kef=r[2], hotel=kef+6, dep=r[0];
+    if(hotel<van-150||hotel>tot+150) return;
+    ritten.push({dep:dep,kef:kef,hotel:hotel,
+      status:hotel<van?'vroeg':(hotel>tot?'laat':'ok'),
+      wegVoet:dep-38, wegBus:dep-50});
+  });
+  const bsi=[van-50,tot-50];
+  return {ritten:ritten, geenInVenster:!ritten.some(x=>x.status==='ok'),
+    flybus:{bsi:bsi, ophalen:[bsi[0]-30,bsi[1]-30], wegVoet:[bsi[0]-38,bsi[1]-38], wegBus:[bsi[0]-50,bsi[1]-50]}};
+}
+/*PURE-END*/
+
 const THUIS=[64.1512,-21.9470];
 const FIJN = window.matchMedia('(pointer:fine)').matches;
 const CACHE='rvk-coords-v2';
@@ -509,6 +696,8 @@ const laagVik  =L.layerGroup();
 const laagEten =L.layerGroup();
 const laagWink =L.layerGroup();
 const laagBier =L.layerGroup();
+const laagBus  =L.layerGroup();
+const laagAir  =L.layerGroup();
 
 /* ---------- helpers ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -602,10 +791,140 @@ BIER.forEach(b=>{
       '<a href="https://www.google.com/maps/dir/?api=1&destination='+b.ll[0]+','+b.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a></div>',popOpties);
 });
 
+/* ---------- bushaltes en routes (Strætó + Flybus) ---------- */
+const BUSK={
+  s:{e:'🚌',k:'#D98E04',l:'Strætó-halte'},
+  f:{e:'🚍',k:'#2A6F97',l:'Flybus-halte'},
+  sf:{e:'🚏',k:'#171A1F',l:'Strætó + Flybus'},
+  h:{e:'🏨',k:'#171A1F',l:'Bestemming'}
+};
+function busPopup(b){
+  return '<div class="pop-cat">'+BUSK[b.t].l+' · '+b.km.toFixed(1)+' km</div>'+
+    '<div class="pop-naam">'+esc(b.n)+'</div>'+
+    '<div class="pop-adres">'+esc(b.a)+'</div>'+
+    '<div>'+esc(b.d)+'</div>'+
+    (b.reg?'<div class="pop-expo">'+esc(b.reg)+'</div>':'')+
+    (b.bord?'<div class="bordnoot">Bord op de bus</div>'+bordenHtml(b.bord)+'<div class="bordnoot">Lijnnummer en eindhalte volgens straeto.is. De exacte bordtekst is niet gepubliceerd, ga op het nummer af.</div>':'')+
+    (b.ok?'':'<div class="pop-winter">Positie bij benadering — controleer de exacte halte voor je erheen gaat.</div>')+
+    '<div class="pop-links">'+
+    (b.u?'<a href="'+b.u+'" target="_blank" rel="noopener">Informatie ↗</a>':'')+
+    '<a href="https://www.google.com/maps/dir/?api=1&destination='+b.ll[0]+','+b.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a></div>';
+}
+BUS.forEach(b=>{
+  b.km=afstand(vertrek,b.ll);
+  b.marker=L.marker(b.ll,{
+      icon:L.divIcon({className:'',html:'<div class="gv" style="border-color:'+BUSK[b.t].k+'">'+BUSK[b.t].e+'</div>',iconSize:[32,32],iconAnchor:[16,16]}),
+      title:b.n})
+    .addTo(laagBus).bindPopup(()=>busPopup(b),popOpties);
+});
+const lijnenGroep=L.layerGroup().addTo(laagBus);
+const bpos=id=>BUS.find(x=>x.id===id).ll;
+function tekenLijnen(){
+  lijnenGroep.clearLayers();
+  const maak=(pts,kleur,dash,tip)=>{
+    const l=L.polyline(pts,{color:kleur,weight:3,opacity:.8,dashArray:dash}).addTo(lijnenGroep);
+    if(FIJN) l.bindTooltip(tip,{sticky:true});
+  };
+  maak([bpos('kef-s'),bpos('fjo'),bpos('bsi')],'#2A6F97','9 6','Lijn 55 · KEF → Fjörður → BSÍ · hemelsbreed getekend');
+  maak([bpos('fjo'),bpos('sku')],'#D98E04','9 6','Lijn 1 · Fjörður → Skúlagata · hemelsbreed getekend');
+  maak([bpos('bsi'),bpos('myr')],'#D98E04','5 5','Stadsbus lijn 14 of 15 · BSÍ ↔ Mýrargata (volgens Moovit) · hemelsbreed getekend');
+  maak([bpos('bsi'),THUIS],'#6E7684','2 6','Te voet BSÍ ↔ Mýrargata 18 · ± 25 min (1,7 km)');
+  maak([bpos('sku'),THUIS],'#6E7684','2 6','Te voet Skúlagata ↔ Mýrargata 18 · ± 15 min');
+  tekenAir();
+}
+
+/* ---------- laag: Iceland Airwaves, zaterdag 7 nov (jouw avondplan) ---------- */
+/* Adressen volgens icelandairwaves.is/venues. Posities met ok:false zijn bij benadering; de app haalt ze eenmalig op via de adressen. */
+const AIRKLEUR='#C2185B';
+const AIR=[
+ {id:'idno',n:'Iðnó',a:'Vonarstræti 3',g:'Vonarstræti 3, Reykjavík',ll:[64.1431,-21.9392],ok:false,
+  d:'Festivalvenue, volledig toegankelijk.'},
+ {id:'lemmy',n:'Lemmy',a:'Austurstræti 20',g:'Austurstræti 20, Reykjavík',ll:[64.1468,-21.9407],ok:false,
+  d:'Festivalvenue, volledig toegankelijk. Volgens icelandairwaves.is: vraag naar de zijingang.'},
+ {id:'ros',n:'Rosenberg',a:'Naustin (voormalig BIRD)',g:'Naustin, Reykjavík',ll:[64.1487,-21.9428],ok:false,
+  d:'Festivalvenue, volledig toegankelijk. icelandairwaves.is vermeldt alleen "Naustin (former BIRD)", zonder huisnummer: controleer de exacte plek.'},
+ {id:'frik',n:'Fríkirkjan',a:'Fríkirkjuvegur 5',g:'Fríkirkjuvegur 5, Reykjavík',ll:[64.1448,-21.9338],ok:false,
+  d:'Festivalvenue, volledig toegankelijk.'},
+ {id:'nasa',n:'NASA',a:'Thorvaldsensstræti 2',g:'Thorvaldsensstræti 2, Reykjavík',ll:[64.1478,-21.9407],ok:false,
+  d:'Festivalvenue, volledig toegankelijk.'},
+ {id:'city',n:'City Hall (Ráðhús)',a:'Tjarnargata 11',g:'Tjarnargata 11, Reykjavík',ll:[64.1465,-21.9390],ok:false,
+  d:'Festivalvenue, volledig toegankelijk.'}
+];
+/* hoofdplan: negen sets zonder overlap */
+const AIRPLAN=[
+ {nr:1,v:'idno', t:'19:00–19:40',act:'GRIMA',gen:'Post-punk'},
+ {nr:2,v:'lemmy',t:'19:40–20:20',act:'KOIKOI',gen:'Indie rock / post-punk'},
+ {nr:3,v:'ros',  t:'20:30–21:10',act:'Cell7',gen:'Hiphop'},
+ {nr:4,v:'idno', t:'21:10–21:40',act:'SUNTRAP',gen:'Elektronisch / psychedelisch'},
+ {nr:5,v:'lemmy',t:'21:40–22:20',act:'Heartworms',gen:'Post-punk / gothic rock'},
+ {nr:6,v:'lemmy',t:'22:40–23:20',act:'knackered',gen:'Techno / club'},
+ {nr:7,v:'ros',  t:'23:30–00:10',act:'BKPM',gen:'Krautrock / post-punk'},
+ {nr:8,v:'idno', t:'00:10–00:40',act:'David Bay',gen:'Disco / house'},
+ {nr:9,v:'idno', t:'01:00–02:00',act:'Skeler',gen:'Techno'}
+];
+/* Plan B per set */
+const AIRB=[
+ {voor:2,v:'frik',t:'19:50–20:30',act:'Arny Margret',gen:'Indie-folk'},
+ {voor:3,v:'frik',t:'20:50–21:30',act:'Jamie Woon',gen:'Soul'},
+ {voor:4,v:'ros', t:'21:30–22:10',act:'punktò',gen:'Synth-pop / disco'},
+ {voor:5,v:'nasa',t:'21:20–22:00',act:'Leith Ross',gen:'Singer-songwriter'},
+ {voor:6,v:'frik',t:'22:50–23:30',act:'Ólöf Arnalds',gen:'Singer-songwriter'},
+ {voor:6,v:'nasa',t:'22:20–23:00',act:'Róshildur',gen:'Experimenteel'},
+ {voor:7,v:'city',t:'23:10–23:50',act:'Kaktus Einarsson',gen:'Singer-songwriter'},
+ {voor:8,v:'city',t:'00:10–00:50',act:'The Itch',gen:'Alt-rock'}
+];
+const airV=id=>AIR.find(x=>x.id===id);
+const loopMin=(a,b)=>Math.max(1,Math.round(afstand(a,b)*1.25/4.8*60));
+const AIRPLANLINK='https://claude.ai/artifact/52EE9kafEYQSFETxZaRctZ';
+
+function airPopup(v){
+  const mijn=AIRPLAN.filter(x=>x.v===v.id), alt=AIRB.filter(x=>x.v===v.id);
+  let h='<div class="pop-cat">Iceland Airwaves · zat 7 nov</div><div class="pop-naam">'+esc(v.n)+'</div>'+
+    '<div class="pop-adres">'+esc(v.a)+' · '+v.km.toFixed(1)+' km</div><div>'+esc(v.d)+'</div>';
+  if(mijn.length){
+    h+='<div class="bordnoot">Jouw plan hier</div>';
+    mijn.forEach(x=>{
+      const vol=AIRPLAN.find(y=>y.nr===x.nr+1);
+      const naar=vol&&vol.v!==v.id?' <span class="airnaar">→ '+esc(airV(vol.v).n)+', ± '+loopMin(v.ll,airV(vol.v).ll)+' min lopen</span>':
+                 (vol?' <span class="airnaar">→ blijf hier</span>':'');
+      h+='<div class="airrij"><b>'+x.nr+'</b> <span class="airtijd">'+x.t+'</span> '+esc(x.act)+' <i>'+esc(x.gen)+'</i>'+naar+'</div>';
+    });
+  }
+  if(alt.length){
+    h+='<div class="bordnoot">Plan B hier</div>';
+    alt.forEach(x=>{
+      h+='<div class="airrij alt"><b>B'+x.voor+'</b> <span class="airtijd">'+x.t+'</span> '+esc(x.act)+' <i>'+esc(x.gen)+'</i></div>';
+    });
+  }
+  h+='<div class="pop-links"><a href="https://icelandairwaves.is/venues" target="_blank" rel="noopener">Venues ↗</a>'+
+     '<a href="'+AIRPLANLINK+'" target="_blank" rel="noopener">Volledig plan ↗</a>'+
+     '<a href="https://www.google.com/maps/dir/?api=1&destination='+v.ll[0]+','+v.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a></div>';
+  if(!(v.ok||v.exact)) h+='<div class="pop-winter">Positie bij benadering, de app zoekt hem eenmalig op via het adres.</div>';
+  return h;
+}
+AIR.forEach(v=>{
+  v.km=afstand(vertrek,v.ll);
+  v.sub=(AIRPLAN.filter(x=>x.v===v.id).length||'0')+' sets in je plan'+(AIRB.some(x=>x.v===v.id)?' · Plan B':'');
+  v.marker=L.marker(v.ll,{
+      icon:L.divIcon({className:'',html:'<div class="gv" style="border-color:'+AIRKLEUR+'">🎶</div>',iconSize:[32,32],iconAnchor:[16,16]}),
+      title:v.n})
+    .addTo(laagAir).bindPopup(()=>airPopup(v),popOpties);
+});
+const airLijnen=L.layerGroup().addTo(laagAir);
+function tekenAir(){
+  airLijnen.clearLayers();
+  for(let i=0;i<AIRPLAN.length-1;i++){
+    const a=AIRPLAN[i], b=AIRPLAN[i+1];
+    if(a.v===b.v) continue;
+    const va=airV(a.v), vb=airV(b.v);
+    const l=L.polyline([va.ll,vb.ll],{color:AIRKLEUR,weight:3,opacity:.75,dashArray:'6 6'}).addTo(airLijnen);
+    if(FIJN) l.bindTooltip('Set '+a.nr+' → '+b.nr+' · '+va.n+' → '+vb.n+' · ± '+loopMin(va.ll,vb.ll)+' min lopen',{sticky:true});
+  }
+}
 /* ---------- laagknoppen ---------- */
-const aanLagen={musea:true,expo:true,vik:false,eten:false,bier:false,wink:false};
-const groepen={musea:laagMusea,expo:laagExpo,vik:laagVik,eten:laagEten,bier:laagBier,wink:laagWink};
-document.querySelectorAll('.tog').forEach(b=>{
+const aanLagen={musea:true,expo:true,vik:false,eten:false,bier:false,wink:false,bus:false,air:false};
+const groepen={musea:laagMusea,expo:laagExpo,vik:laagVik,eten:laagEten,bier:laagBier,wink:laagWink,bus:laagBus,air:laagAir};
+document.querySelectorAll('.tog[data-laag]').forEach(b=>{
   const g=groepen[b.dataset.laag];
   if(b.getAttribute('aria-pressed')==='false') kaart.removeLayer(g);
   b.addEventListener('click',()=>{
@@ -623,6 +942,7 @@ const zoek=document.getElementById('zoek');
 let timer; zoek.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(teken,160)});
 
 function teken(){
+  tekenLijnen();
   const q=zoek.value.trim().toLowerCase();
   const frag=document.createDocumentFragment();
   const rijen=[];
@@ -635,6 +955,14 @@ function teken(){
   if(aanLagen.bier) BIER.forEach(b=>rijen.push({
     naam:b.n, sub:b.a, km:b.km, ic:'🍺', kleur:'#7A5A1E', merk:'',
     zoek:b.n+' '+b.a+' '+b.d, ll:b.ll, marker:b.marker
+  }));
+  if(aanLagen.bus) BUS.forEach(b=>rijen.push({
+    naam:b.n, sub:b.sub, km:b.km, ic:BUSK[b.t].e, kleur:BUSK[b.t].k, merk:'',
+    zoek:b.n+' '+b.a+' '+b.d+' '+b.sub, ll:b.ll, marker:b.marker
+  }));
+  if(aanLagen.air) AIR.forEach(v=>rijen.push({
+    naam:v.n, sub:v.sub, km:v.km, ic:'🎶', kleur:AIRKLEUR, merk:'',
+    zoek:v.n+' '+v.a+' '+v.d+' airwaves '+AIRPLAN.concat(AIRB).filter(x=>x.v===v.id).map(x=>x.act).join(' '), ll:v.ll, marker:v.marker
   }));
   GV.forEach(p=>{
     const laag = p.k==='winkel' ? 'wink' : 'eten';
@@ -691,7 +1019,7 @@ document.getElementById('hier').addEventListener('click',()=>{
     vertrek=ll; vertrekNaam='je huidige positie';
     if(mijnMarker) mijnMarker.setLatLng(ll);
     else mijnMarker=L.circleMarker(ll,{radius:8,color:'#fff',weight:3,fillColor:'#1B3FA0',fillOpacity:1}).addTo(kaart);
-    M.concat(GV,BIER).forEach(m=>m.km=afstand(vertrek,m.ll));
+    M.concat(GV,BIER,BUS,AIR).forEach(m=>m.km=afstand(vertrek,m.ll));
     teken(); kaart.setView(ll,14);
     melding('Afstanden vanaf je huidige positie');
   },()=>melding('Positie niet gevonden — afstanden blijven vanaf Mýrargata 18'),{enableHighAccuracy:false,timeout:8000,maximumAge:300000});
@@ -713,7 +1041,7 @@ function zetPositie(m,ll){
 async function posities(forceer){
   const cache=forceer?{}:leesCache();
   let uitCache=0;
-  const alles=M.concat(GV,BIER);
+  const alles=M.concat(GV,BIER,BUS,AIR);
   alles.forEach(m=>{ if(m.g&&cache[m.g]) { zetPositie(m,cache[m.g]); uitCache++; } });
   const todo=alles.filter(m=>m.g&&!cache[m.g]);
   teken();
@@ -738,6 +1066,155 @@ document.getElementById('opnieuw').addEventListener('click',()=>posities(true));
 /* ---------- resize ---------- */
 let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>kaart.invalidateSize(),200)},{passive:true});
 sheet.addEventListener('transitionend',()=>kaart.invalidateSize());
+
+/* ---------- vervoerpaneel: tijden, keuzehulp en prijzen ---------- */
+const vp=document.getElementById('vervoer'), vin=document.getElementById('vinhoud');
+const vknop=document.querySelector('.tog[data-actie="vervoer"]');
+const vtabs=[].slice.call(document.querySelectorAll('.vtab'));
+const vst={tab:'aan',land:'16:20',van:'20:30',tot:'21:00'};
+function kopHoogte(){ document.documentElement.style.setProperty('--kopH',document.getElementById('kop').offsetHeight+'px'); }
+kopHoogte(); addEventListener('resize',kopHoogte,{passive:true});
+
+const bereik=(a,b)=>a===b?'± '+ts(a):'± '+ts(a)+' tot '+ts(b);
+const kaartKnoppen='<div class="vknoppen"><button type="button" data-kaart="kef">Kaart: luchthaven</button>'+
+  '<button type="button" data-kaart="stad">Kaart: Reykjavík</button><button type="button" data-kaart="alles">Kaart: hele route</button>'+
+  '<button type="button" data-kaart="uit">Haltes van de kaart halen</button></div>';
+/* Bus en Vervoer zijn één knop: het paneel opent en de haltes verschijnen op de kaart */
+function syncVknop(){ vknop.setAttribute('aria-pressed',String(vp.classList.contains('open')||aanLagen.bus)); }
+function zetBus(aan){
+  if(aan===aanLagen.bus) return;
+  aanLagen.bus=aan; aan?kaart.addLayer(laagBus):kaart.removeLayer(laagBus);
+  teken(); syncVknop();
+}
+const stadsbusNoot='Stadsbus: lijn 14 en 15 stoppen volgens Moovit zowel bij BSÍ als bij de halte Mýrargata. Rittijd en frequentie zijn niet bevestigd, controleer ze in de planner op straeto.is.';
+const bordNoot='Bordjes: lijnnummer en eindhalte komen uit de routepagina\'s op straeto.is. Strætó publiceert de exacte tekst op de bus niet, dus ga vooral op het lijnnummer af. Voor lijn 14 en 15 is de richting afgeleid van de eindhalten (14 Grandi – Verzló, 15 Vesturbær – Mosfellsbær); Moovit noemt bij BSÍ voor lijn 15 een andere naam (Reykjavegur). Controleer het bord bij het instappen.';
+const stadsBordHeen=bordenHtml([['14','Grandi','richting Grandi','Uitstappen: halte Mýrargata (1 tot 2 min lopen)'],['15','Vesturbær','richting Vesturbær','Uitstappen: halte Mýrargata (1 tot 2 min lopen)']]);
+
+function formAan(){
+  return '<div class="vk"><div class="vt">Vr 6 nov · KEF → Mýrargata 18</div>'+
+    '<div class="vform"><label>Landing HV9121<input type="time" id="v-land" value="'+vst.land+'"></label></div>'+
+    '<div class="vnoot">Alleen handbagage. Gepland: landing 16:20. Vul de echte landingstijd in als de vlucht vertraagd is.</div></div>'+
+    '<div id="v-uit"></div>';
+}
+function uitAan(){
+  const r=berekenAankomst(vst.land), f=r.flybus;
+  let h='<div class="vk"><div class="vnoot">Je staat naar schatting om <b>'+ts(r.buiten)+'</b> buiten bij de halte.</div></div>';
+  h+='<div class="vkop2">Strætó lijn 55 · instappen bij KEF Komur</div>';
+  h+='<div class="vnoot" style="padding:0 4px 4px">Sinds 1 okt 2026 vertrekt lijn 55 bij de nieuwe halte KEF Komur aan de aankomstzijde, via een overdekte looproute. Kjóavellir is nu de halte van lijn 89.</div>';
+  if(!r.ritten.length) h+='<div class="vk">Geen Strætó meer na dat uur. Neem de Flybus.</div>';
+  r.ritten.forEach((x,i)=>{
+    h+='<div class="vk rit'+(i===0?' eerste':'')+'"><div class="vrij"><span class="vuur">'+ts(x.dep)+'</span>'+
+      '<span class="vdoel">→ '+x.halte+' '+ts(x.aan)+'</span><span class="vwacht">'+x.wacht+' min na buiten</span></div>'+
+      bord('55',x.halte,'richting Reykjavík');
+    if(x.bsi){
+      h+='<div class="vsub"><b>Naar het appartement vanaf BSÍ</b><br>'+
+        'Stadsbus lijn 14 of 15: thuis <b>'+bereik(x.stad[0],x.stad[1])+'</b>'+stadsBordHeen+
+        'Te voet (1,7 km): thuis <b>± '+ts(x.voet)+'</b> · taxi: thuis <b>± '+ts(x.taxi)+'</b></div>';
+    } else {
+      h+='<div class="vsub"><b>Naar het appartement vanaf Fjörður</b><br>'+
+        'Lijn 1 naar Skúlagata, dan ± 15 min lopen: thuis <b>'+bereik(x.thuis[0],x.thuis[1])+'</b>'+
+        bord('1','Skúlagata','richting centrum Reykjavík','Uitstappen: Skúlagata (± 15 min lopen)')+
+        'Deze rit rijdt niet door tot BSÍ.</div>';
+    }
+    if(x.laat) h+='<div class="vwaarsch">Lijn 1 laat in de avond is niet nagekeken. De Flybus is zekerder.</div>';
+    h+='</div>';
+  });
+  h+='<div class="vkop2">Flybus · geen vaste tijd</div>'+
+    '<div class="vk rit"><div class="vrij"><span class="vuur">± '+ts(f.vertrek[0])+'–'+ts(f.vertrek[1])+'</span>'+
+    '<span class="vdoel">→ BSÍ '+ts(f.bsi[0])+'–'+ts(f.bsi[1])+'</span></div>'+
+    bord('Flybus','Reykjavík BSÍ','bordtekst niet bevestigd, herken de Flybus aan het logo')+
+    '<div class="vsub"><b>Naar het appartement vanaf BSÍ</b><br>'+
+    'Stadsbus lijn 14 of 15: thuis <b>'+bereik(f.stad[0],f.stad[1])+'</b>'+stadsBordHeen+
+    'Te voet: thuis <b>'+bereik(f.voet[0],f.voet[1])+'</b><br>'+
+    'Flybus+: minibus naar de halte Sjóminjasafnið (± 200 m van het appartement), thuis <b>'+bereik(f.plus[0],f.plus[1])+'</b><br>'+
+    'Het ticket vanaf KEF is geldig op elke bus, ook bij vertraging.</div></div>';
+  h+='<div class="vnoot" style="padding:0 4px 8px">'+stadsbusNoot+'</div>';
+  h+='<div class="vnoot" style="padding:0 4px 8px">'+bordNoot+'</div>';
+  h+=kaartKnoppen;
+  document.getElementById('v-uit').innerHTML=h;
+}
+
+function formTerug(){
+  return '<div class="vk"><div class="vt">Di 10 nov · BSÍ → KEF → Aurora Hotel</div>'+
+    '<div class="vform"><label>Aan het hotel vanaf<input type="time" id="v-van" value="'+vst.van+'"></label>'+
+    '<label>tot<input type="time" id="v-tot" value="'+vst.tot+'"></label></div>'+
+    '<div class="vnoot">Alleen ritten vanaf BSÍ. Uitchecken vóór 10:00. Het hotel ligt ± 100 m van de terminal, opgegeven aankomsttijd 21:00.</div></div>'+
+    '<div id="v-uit"></div>';
+}
+function uitTerug(){
+  const r=berekenTerug(vst.van,vst.tot), f=r.flybus;
+  const stat={ok:'past in het tijdvenster',vroeg:'te vroeg voor het tijdvenster',laat:'te laat voor het tijdvenster'};
+  let h='<div class="vkop2">Strætó lijn 55 vanaf BSÍ naar KEF</div>';
+  if(r.geenInVenster) h+='<div class="vwaarsch" style="margin:0 0 10px">Geen Strætó-rit vanaf BSÍ brengt je in dit tijdvenster aan het hotel. Na 18:28 start lijn 55 alleen nog in Fjörður. Neem voor het venster de Flybus.</div>';
+  if(!r.ritten.length) h+='<div class="vk">Geen Strætó-rit vanaf BSÍ in of rond dit tijdvenster.</div>';
+  r.ritten.forEach(x=>{
+    h+='<div class="vk rit '+x.status+'"><div class="vrij"><span class="vuur">'+ts(x.dep)+'</span>'+
+      '<span class="vdoel">BSÍ → KEF '+ts(x.kef)+'</span><span class="vwacht">'+stat[x.status]+'</span></div>'+
+      bord('55','KEF – Airport','richting Keflavík')+
+      '<div class="vsub">Aan het hotel <b>± '+ts(x.hotel)+'</b></div></div>';
+  });
+  h+='<div class="vnoot" style="padding:0 4px 8px">Rit 19:50 vanaf Fjörður (KEF 20:33) is weggelaten: die start niet in BSÍ.</div>';
+  h+='<div class="vkop2">Flybus vanaf BSÍ · vertrekuur kiezen bij het boeken</div>'+
+    '<div class="vk rit ok"><div class="vrij"><span class="vuur">'+ts(f.bsi[0])+'–'+ts(f.bsi[1])+'</span>'+
+    '<span class="vdoel">vertrek BSÍ</span></div>'+
+    bord('Flybus','KEF Airport','bordtekst niet bevestigd, personeel in BSÍ wijst de juiste bus aan')+
+    '<div class="vsub">Kies in de boekingskalender op flybus.is een vertrek in dit venster. Een bus doet er ± 45 min over.<br>'+
+    'Aan het hotel ± '+ts(f.bsi[0]+51)+' tot '+ts(f.bsi[1]+51)+'.<br>'+
+    'De laatste Flybus vertrekt om 22:30. Bij een gemiste bus blijft het ticket geldig voor de volgende.</div></div>';
+  h+='<div class="vnoot" style="padding:0 4px 8px">Aan het hotel stap je uit bij KEF Brottfarir, bij de terminal. Instappen kan daar niet.</div>';
+  h+='<div class="vnoot" style="padding:0 4px 8px">Bordjes: lijnnummer en bestemming komen van straeto.is en flybus.is. De exacte tekst op de bus is niet gepubliceerd, dus ga op het lijnnummer af. Flybus-personeel in BSÍ wijst de juiste bus aan.</div>';
+  h+=kaartKnoppen;
+  document.getElementById('v-uit').innerHTML=h;
+}
+
+function viewInfo(){
+  return '<div class="vk"><div class="vt">Praktisch</div><ul class="vlijst">'+
+    '<li>Klappið werkt niet zonder IJslands nummer. Betaal bij Strætó contactloos met bankkaart of Apple Pay/Google Pay, of bij de chauffeur.</li>'+
+    '<li>Strætó op KEF: instappen bij KEF Komur (aankomstzijde, overdekte looproute), uitstappen bij KEF Brottfarir. Beide haltes zijn nieuw sinds 1 okt 2026. Flybus: buiten de aankomsthal.</li>'+
+    '<li>10 nov: uitchecken vóór 10:00, vertrek pas na 17:00. Met alleen handbagage kunnen de tassen mee. BSÍ heeft volgens flybus.is ook bagageopslag.</li>'+
+    '<li>Aurora Hotel: +354 595 1900. Laat het weten bij vertraging.</li></ul></div>'+
+    '<div class="vk"><div class="vt">Nog niet bevestigd</div><ul class="vlijst">'+
+    '<li>Stadsbus lijn 14 of 15 tussen BSÍ en de halte Mýrargata: de lijnen komen uit Moovit, rittijd (geschat 10 tot 15 min), en frequentie niet.</li>'+
+    '<li>Rittijd lijn 1 tussen Skúlagata en Fjörður (schatting 35 tot 45 min), nodig voor de ritten die in Fjörður eindigen.</li>'+
+    '<li>Exacte Flybus-vertrekuren vanaf BSÍ op 10 nov: zie flybus.is.</li>'+
+    '<li>De exacte tekst op het bord van elke bus. Strætó publiceert die niet; de bordjes tonen lijnnummer en eindhalte uit straeto.is.</li>'+
+    '<li>Alle haltes met ‘bij benadering’ staan niet op de exacte plek getekend, ook KEF Komur en KEF Brottfarir.</li></ul></div>'+
+    '<div class="vnoot" style="padding:0 4px">Bronnen: straeto.is (tijdtabel lijn 55, werkdagen, geldig vanaf 02.01.2026; routepagina\'s lijn 1, 14, 15), stjornarradid.is (nieuwe KEF-haltes, 30.09.2026), flybus.is, Moovit (stadslijnen), Booking- en hotelbevestiging.</div>';
+}
+
+function toonTab(t){
+  vst.tab=t;
+  vtabs.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===t)));
+  if(t==='aan'){
+    vin.innerHTML=formAan(); uitAan();
+    document.getElementById('v-land').addEventListener('input',e=>{ if(e.target.value){vst.land=e.target.value; uitAan();} });
+  } else if(t==='terug'){
+    vin.innerHTML=formTerug(); uitTerug();
+    document.getElementById('v-van').addEventListener('input',e=>{ if(e.target.value){vst.van=e.target.value; uitTerug();} });
+    document.getElementById('v-tot').addEventListener('input',e=>{ if(e.target.value){vst.tot=e.target.value; uitTerug();} });
+  } else {
+    vin.innerHTML=viewInfo();
+  }
+  vin.scrollTop=0;
+}
+vtabs.forEach(b=>b.addEventListener('click',()=>toonTab(b.dataset.tab)));
+
+function openVervoer(){ kopHoogte(); vp.classList.add('open'); zetBus(true); syncVknop(); toonTab(vst.tab); }
+function sluitVervoer(){ vp.classList.remove('open'); syncVknop(); }
+vknop.addEventListener('click',()=>vp.classList.contains('open')?sluitVervoer():openVervoer());
+document.getElementById('vsluit').addEventListener('click',sluitVervoer);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&vp.classList.contains('open')) sluitVervoer(); });
+
+function toonKaart(w){
+  sluitVervoer();
+  if(w==='uit'){ zetBus(false); return; }
+  zetBus(true);
+  const ids={kef:['kef-s','kef-b','kef-f','aur'], stad:['bsi','sku','myr','fbp'], alles:BUS.map(b=>b.id)};
+  const pts=ids[w].map(bpos); if(w!=='kef') pts.push(THUIS);
+  dicht();
+  kaart.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[28,150],paddingBottomRight:[28,120],maxZoom:16});
+}
+vin.addEventListener('click',e=>{ const b=e.target.closest('[data-kaart]'); if(b) toonKaart(b.dataset.kaart); });
 
 teken();
 posities(false);
