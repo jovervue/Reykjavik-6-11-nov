@@ -16,10 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="Rey 6 tot 11 nov">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Rey 6 tot 11 nov</title>
-<link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin>
-<link rel="preconnect" href="https://b.basemaps.cartocdn.com" crossorigin>
-<link rel="preconnect" href="https://c.basemaps.cartocdn.com" crossorigin>
-<link rel="preconnect" href="https://d.basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link id="lcss" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       onerror="this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'">
@@ -688,20 +685,10 @@ const kaart=L.map('kaart',{
 
 const OSM_ATTR='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 const tegelOpties={maxZoom:19, minZoom:8, updateWhenIdle:false, updateWhenZooming:false, keepBuffer:2};
-let tegels=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  Object.assign({},tegelOpties,{attribution:OSM_ATTR+' &copy; <a href="https://carto.com/attributions">CARTO</a>'})).addTo(kaart);
-
-/* valt CARTO weg, dan de standaardtegels van OpenStreetMap */
-let fouten=0, gewisseld=false;
-tegels.on('tileerror',()=>{
-  if(gewisseld || ++fouten<5) return;
-  gewisseld=true;
-  kaart.removeLayer(tegels);
-  tegels=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    Object.assign({},tegelOpties,{attribution:OSM_ATTR})).addTo(kaart);
-  tegels.on('tileerror',()=>melding('Achtergrondkaart niet bereikbaar — markers en lijst werken wel'));
-  melding('Achtergrondkaart via OpenStreetMap');
-});
+let tegels=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  Object.assign({},tegelOpties,{attribution:OSM_ATTR})).addTo(kaart);
+let fouten=0;
+tegels.on('tileerror',()=>{ if(++fouten===5) melding('Achtergrondkaart niet bereikbaar — markers en lijst werken wel'); });
 
 const laagMusea=L.layerGroup().addTo(kaart);
 const laagExpo =L.layerGroup().addTo(kaart);
