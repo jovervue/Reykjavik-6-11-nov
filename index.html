@@ -543,20 +543,20 @@ const bordenHtml=a=>a.map(x=>bord(x[0],x[1],x[2],x[3])).join('');
 /* Posities met ok:false zijn bij benadering getekend; controleer de exacte halte in de planner van straeto.is / flybus.is */
 const BUS = [
  {id:"kef-s", n:"KEF Komur / Arrivals — instappen lijn 55", t:"s", ll:[63.9862, -22.62299], rel:{ref:"aur",dx:420,dy:30}, sub:"Lijn 55 naar Reykjavík",
-  a:"Keflavík Airport, aankomstzijde (bij de terminal)", ok:false,
-  d:"Sinds 1 okt 2026 vertrekt lijn 55 naar Reykjavík bij de nieuwe halte KEF Komur / Arrivals, aan de aankomstzijde van de terminal. De looproute vanaf de terminal is overdekt. Op de officiële haltekaart ligt de halte ± 430 m ten oosten van Hotel Aurora. Kjóavellir is nu de halte van lijn 89 en niet meer van lijn 55.",
+  a:"Keflavík Airport, oostelijk uiteinde van het aankomstgebied", ok:false,
+  d:"Sinds 1 okt 2026 vertrekt lijn 55 naar Reykjavík bij de nieuwe halte KEF Komur / Arrivals (‘Bus – Route 55 / Arrivals’ op de officiële KEF-kaart). Die ligt aan het oostelijke uiteinde van het aankomstgebied, voorbij de Flybus en de taxi's, naast parking P3. Vanaf de aankomsthal is het enkele honderden meters lopen (schatting); de looproute is volgens het Ministerie overdekt. Kjóavellir is nu de halte van lijn 89 en niet meer van lijn 55.",
   reg:"Vr 6 nov: 16:54 (BSÍ 18:06) · 17:54 (Fjörður 18:42) · 18:54 (Fjörður 19:42). contactloos of bij de chauffeur.",
   bord:[["55","BSÍ","rit die doorrijdt tot BSÍ"],["55","Fjörður","rit die in Hafnarfjörður eindigt"]],
   u:"https://www.kefairport.com/services/straeto"},
  {id:"kef-b", n:"KEF Brottfarir / Departures — uitstappen lijn 55", t:"s", ll:[63.98501, -22.6276], rel:{ref:"aur",dx:195,dy:-102}, sub:"Lijn 55 uit Reykjavík stopt hier",
-  a:"Keflavík Airport, vertrekzijde (bij de terminal)", ok:false,
-  d:"Lijn 55 uit Reykjavík zet je hier af, op dezelfde plek als de vliegtuigbussen. Instappen kan hier niet. Hotel Aurora ligt op de officiële haltekaart hemelsbreed ± 220 m verderop (de halte Kjóavellir van lijn 89 ligt ± 115 m van het hotel). Nieuw sinds 1 okt 2026.",
+  a:"Keflavík Airport, vertrekzijde, bij P1 Comfort Parking", ok:false,
+  d:"Lijn 55 uit Reykjavík zet je hier af (‘Bus – Route 55 / Departures’ op de officiële KEF-kaart, bij P1 Comfort Parking aan de vertrekzijde van de terminal). Instappen kan hier niet. Hotel Aurora ligt op de officiële haltekaart hemelsbreed ± 220 m verderop (de halte Kjóavellir van lijn 89 ligt ± 115 m van het hotel). Nieuw sinds 1 okt 2026.",
   reg:"Di 10 nov: 55 vanaf BSÍ om 16:28 (KEF 17:34), 17:28 (KEF 18:34) of 18:28 (KEF 19:34).",
   bord:[["55","KEF – Airport","richting Keflavík"]],
   u:"https://www.kefairport.com/services/straeto"},
- {id:"kef-f", n:"KEF — Flybus (aankomsthal)", t:"f", ll:[63.98476, -22.62483], rel:{ref:"aur",dx:330,dy:-130,onzeker:true}, sub:"Flybus naar BSÍ",
-  a:"Keflavík Airport, buiten de aankomsthal", ok:false,
-  d:"De Flybus staat buiten het terminalgebouw (de pin staat bij de terminal, niet op de exacte plek) en vertrekt ± 35 tot 45 min na elke aankomende vlucht. Het ticket vanaf KEF is flexibel: je mag elke bus nemen.",
+ {id:"kef-f", n:"KEF — Flybus (aankomsthal)", t:"f", ll:[63.98548, -22.62524], rel:{ref:"aur",dx:310,dy:-50,onzeker:true}, sub:"Flybus naar BSÍ",
+  a:"Keflavík Airport, aankomstzijde, vlak buiten de terminal", ok:false,
+  d:"De Flybus (‘Airport Shuttle – Flybus’ op de officiële KEF-kaart) staat direct aan de aankomstzijde, bij de taxi's en dichter bij de terminal dan de halte van lijn 55. De pin is een schatting. De bus vertrekt ± 35 tot 45 min na elke aankomende vlucht. Het ticket vanaf KEF is flexibel: je mag elke bus nemen.",
   reg:"Rit ± 45 min tot BSÍ.",
   bord:[["Flybus","Reykjavík BSÍ","richting Reykjavík · bordtekst niet bevestigd"]],
   u:"https://flybus.is/plan-your-trip/prices/"},
@@ -566,7 +566,7 @@ const BUS = [
   reg:"Terug naar KEF vanaf BSÍ: Strætó 55 om 16:28, 17:28 of 18:28 (laatste doorgaande rit) · Flybus om de 30 tot 60 min tot 22:30.",
   bord:[["55","KEF – Airport","richting Keflavík"],["Flybus","KEF Airport","bordtekst niet bevestigd; personeel wijst de juiste bus aan"],["14","Grandi","richting appartement (afgeleid)","Uitstappen: halte Mýrargata"],["15","Vesturbær","richting appartement (afgeleid)","Uitstappen: halte Mýrargata"]],
   u:"https://flybus.is/plan-your-trip/bsi-bus-terminal/"},
- {id:"fjo", n:"Fjörður (Hafnarfjörður)", t:"s", ll:[64.0680,-21.9585], g:"Fjarðargata 13, Hafnarfjörður", max:2, sub:"Overstap lijn 55 ↔ lijn 1",
+ {id:"fjo", n:"Fjörður (Hafnarfjörður)", t:"s", ll:[64.0678,-21.9540], g:"Fjarðargata 13, Hafnarfjörður", alt:["Fjarðargata 13-15, 220 Hafnarfjörður","Fjörður verslunarmiðstöð, Hafnarfjörður","Fjarðargata, Hafnarfjörður"], max:2, sub:"Overstap lijn 55 ↔ lijn 1",
   a:"Hafnarfjörður", ok:false,
   d:"Veel ritten van lijn 55 beginnen en eindigen hier in plaats van in BSÍ. Van hieruit rijdt lijn 1 naar het centrum van Reykjavík.",
   reg:"6 nov: 17:54-rit hier om 18:42, 18:54-rit om 19:42. 10 nov: 55 vertrekt hier om 19:50 naar KEF (aankomst 20:33).",
@@ -1128,7 +1128,7 @@ function uitAan(){
   const r=berekenAankomst(vst.land), f=r.flybus;
   let h='<div class="vk"><div class="vnoot">Je staat naar schatting om <b>'+ts(r.buiten)+'</b> buiten bij de halte.</div></div>';
   h+='<div class="vkop2">Strætó lijn 55 · instappen bij KEF Komur</div>';
-  h+='<div class="vnoot" style="padding:0 4px 4px">Sinds 1 okt 2026 vertrekt lijn 55 bij de nieuwe halte KEF Komur aan de aankomstzijde, via een overdekte looproute. Kjóavellir is nu de halte van lijn 89.</div>';
+  h+='<div class="vnoot" style="padding:0 4px 4px">Sinds 1 okt 2026 vertrekt lijn 55 bij de nieuwe halte KEF Komur (Bus – Route 55 / Arrivals). Die ligt aan het oostelijke uiteinde van het aankomstgebied, voorbij de Flybus en de taxi\'s, naast parking P3. Reken enkele minuten lopen mee (overdekte route). Kjóavellir is nu de halte van lijn 89.</div>';
   if(!r.ritten.length) h+='<div class="vk">Geen Strætó meer na dat uur. Neem de Flybus.</div>';
   r.ritten.forEach((x,i)=>{
     h+='<div class="vk rit'+(i===0?' eerste':'')+'"><div class="vrij"><span class="vuur">'+ts(x.dep)+'</span>'+
@@ -1229,7 +1229,12 @@ vtabs.forEach(b=>b.addEventListener('click',()=>toonTab(b.dataset.tab)));
 
 function openVervoer(){ kopHoogte(); if(typeof sluitProgramma==='function') sluitProgramma(); vp.classList.add('open'); zetBus(true); syncVknop(); toonTab(vst.tab); }
 function sluitVervoer(){ vp.classList.remove('open'); syncVknop(); }
-vknop.addEventListener('click',()=>vp.classList.contains('open')?sluitVervoer():openVervoer());
+/* tik 1: paneel + haltes aan · tik 2: paneel dicht · tik 3: haltes van de kaart */
+vknop.addEventListener('click',()=>{
+  if(vp.classList.contains('open')) sluitVervoer();
+  else if(aanLagen.bus) zetBus(false);
+  else openVervoer();
+});
 document.getElementById('vsluit').addEventListener('click',sluitVervoer);
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&vp.classList.contains('open')) sluitVervoer(); });
 
@@ -1301,7 +1306,12 @@ function openProgramma(){
   pin.innerHTML=viewProgramma(); pin.scrollTop=0;
 }
 function sluitProgramma(){ pp.classList.remove('open'); syncPknop(); }
-pknop.addEventListener('click',()=>pp.classList.contains('open')?sluitProgramma():openProgramma());
+/* tik 1: paneel + venues aan · tik 2: paneel dicht · tik 3: venues van de kaart */
+pknop.addEventListener('click',()=>{
+  if(pp.classList.contains('open')) sluitProgramma();
+  else if(aanLagen.air) zetAir(false);
+  else openProgramma();
+});
 document.getElementById('psluit').addEventListener('click',sluitProgramma);
 addEventListener('keydown',e=>{ if(e.key==='Escape'&&pp.classList.contains('open')) sluitProgramma(); });
 function toonSet(nr){
