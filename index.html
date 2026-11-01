@@ -150,20 +150,20 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 @media (prefers-reduced-motion:reduce){#sheet{transition:none}}
 
 /* ---- bus-laag en vervoerpaneel ---- */
-.tog[data-laag="air"]{--laagkleur:#C2185B}
+.tog[data-actie="programma"]{--laagkleur:#C2185B}
 .tog[data-actie="vervoer"]{--laagkleur:#171A1F}
-#vervoer{
+#vervoer,#programma{
   position:fixed;left:0;right:0;bottom:0;top:var(--kopH,112px);z-index:960;
   background:var(--papier);display:none;flex-direction:column;border-top:1px solid var(--rand);
 }
-#vervoer.open{display:flex}
+#vervoer.open,#programma.open{display:flex}
 .vkopbalk{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paneel);border-bottom:1px solid var(--rand);flex:none}
 .vkopbalk strong{font-size:15px}
-#vsluit{margin-left:auto;width:44px;height:44px;border-radius:10px;border:1px solid var(--rand);background:var(--paneel);color:var(--inkt);font-size:18px;cursor:pointer}
+#vsluit,#psluit{margin-left:auto;width:44px;height:44px;border-radius:10px;border:1px solid var(--rand);background:var(--paneel);color:var(--inkt);font-size:18px;cursor:pointer}
 .vtabs{display:flex;gap:7px;padding:8px 12px;background:var(--paneel);border-bottom:1px solid var(--rand);flex:none}
 .vtab{flex:1;min-height:44px;border:1px solid var(--rand);border-radius:10px;background:var(--paneel);color:var(--steen);font:inherit;font-size:14px;font-weight:500;cursor:pointer}
 .vtab[aria-pressed="true"]{color:#2A6F97;background:color-mix(in srgb,#2A6F97 9%,var(--paneel));border-color:color-mix(in srgb,#2A6F97 38%,var(--paneel));font-weight:600}
-#vinhoud{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px calc(28px + var(--safe))}
+#vinhoud,#pinhoud{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px calc(28px + var(--safe))}
 .vk{background:var(--paneel);border:1px solid var(--rand);border-radius:12px;padding:12px 13px;margin-bottom:10px}
 .vk.eerste{border-color:#2A6F97;box-shadow:0 0 0 1px #2A6F97 inset}
 .vk.ok{border-color:#2F7A6B;box-shadow:0 0 0 1px #2F7A6B inset}
@@ -208,6 +208,15 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
 .airtijd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
 .airrij i{color:var(--steen);font-size:12px}
 .airnaar{display:block;font-size:12px;color:var(--steen);margin-left:24px}
+
+.pset{cursor:pointer;border-left:3px solid #C2185B}
+.pset .vuur{min-width:58px;color:#C2185B}
+.pvenue{display:inline-block;background:#C2185B;color:#fff;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:600}
+.pplanb{font-size:12.5px;color:var(--steen);margin-top:7px;padding-top:7px;border-top:1px dashed var(--rand);line-height:1.4}
+.pplanb b{color:#8a5a00;font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-right:4px}
+.pplanb i{font-size:12px}
+.pgap{font-size:12.5px;color:var(--steen);margin:-4px 0 10px 18px;line-height:1.4}
+.pgap.krap{color:#8a2d2d}
 </style>
 </head>
 <body>
@@ -223,7 +232,7 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
     <button class="tog" data-laag="eten" aria-pressed="false">Eten</button>
     <button class="tog" data-laag="bier" aria-pressed="false">Bier</button>
     <button class="tog" data-laag="wink" aria-pressed="false">Winkels</button>
-    <button class="tog" data-laag="air" aria-pressed="false">Airwaves</button>
+    <button class="tog" data-actie="programma" aria-pressed="false">Airwaves</button>
     <button class="tog" data-actie="vervoer" aria-pressed="false">Vervoer</button>
   </div>
 </header>
@@ -255,6 +264,10 @@ body{background:var(--papier);color:var(--inkt);font-family:var(--font);font-siz
   <div id="vinhoud"></div>
 </section>
 
+<section id="programma" aria-label="Airwaves programma zaterdag">
+  <div class="vkopbalk"><strong>Airwaves · zaterdag 7 nov</strong><button id="psluit" type="button" aria-label="Sluiten">✕</button></div>
+  <div id="pinhoud"></div>
+</section>
 <script>
 /*
  Musea Reykjavík — interactieve kaart
@@ -1199,7 +1212,7 @@ function toonTab(t){
 }
 vtabs.forEach(b=>b.addEventListener('click',()=>toonTab(b.dataset.tab)));
 
-function openVervoer(){ kopHoogte(); vp.classList.add('open'); zetBus(true); syncVknop(); toonTab(vst.tab); }
+function openVervoer(){ kopHoogte(); if(typeof sluitProgramma==='function') sluitProgramma(); vp.classList.add('open'); zetBus(true); syncVknop(); toonTab(vst.tab); }
 function sluitVervoer(){ vp.classList.remove('open'); syncVknop(); }
 vknop.addEventListener('click',()=>vp.classList.contains('open')?sluitVervoer():openVervoer());
 document.getElementById('vsluit').addEventListener('click',sluitVervoer);
@@ -1216,6 +1229,80 @@ function toonKaart(w){
 }
 vin.addEventListener('click',e=>{ const b=e.target.closest('[data-kaart]'); if(b) toonKaart(b.dataset.kaart); });
 
+/* ---------- programma-paneel: je geselecteerde Airwaves-concerten van zaterdag ---------- */
+const pp=document.getElementById('programma'), pin=document.getElementById('pinhoud');
+const pknop=document.querySelector('.tog[data-actie="programma"]');
+function syncPknop(){ pknop.setAttribute('aria-pressed',String(pp.classList.contains('open')||aanLagen.air)); }
+function zetAir(aan){
+  if(aan===aanLagen.air) return;
+  aanLagen.air=aan; aan?kaart.addLayer(laagAir):kaart.removeLayer(laagAir);
+  teken(); syncPknop();
+}
+/* starttijden doorlopend rekenen over middernacht */
+function airTijden(){
+  let prev=-1; const uit=[];
+  AIRPLAN.forEach(x=>{
+    const p=x.t.split('–'); let s=tm(p[0]); while(s<prev) s+=1440;
+    let e=tm(p[1]); while(e<s) e+=1440;
+    uit.push({s:s,e:e}); prev=s;
+  });
+  return uit;
+}
+function viewProgramma(){
+  const tijden=airTijden();
+  let h='<div class="vk"><div class="vt">Jouw negen sets</div>'+
+    '<div class="vnoot">Tik op een set om de venue op de kaart te zien. Plan B staat onder elke set. Tijden komen uit je plan "Airwaves Zaterdagplan", controleer ze in de Airwaves-app voor je vertrekt.</div>'+
+    '<div class="vnoot">Je hebt een polsbandje nodig om binnen te komen; het programma begint na 19:00 (icelandairwaves.is). Je dagticket ruil je tijdens de festivalweek om, zie icelandairwaves.is/ticketholders.</div></div>';
+  AIRPLAN.forEach((x,i)=>{
+    const v=airV(x.v), alt=AIRB.filter(b=>b.voor===x.nr), p=x.t.split('–');
+    h+='<div class="vk pset" data-set="'+x.nr+'" role="button" tabindex="0">'+
+      '<div class="vrij"><span class="vuur">'+p[0]+'</span><span class="vdoel">'+esc(x.act)+'</span><span class="vwacht">tot '+p[1]+'</span></div>'+
+      '<div class="vsub"><span class="pvenue">'+esc(v.n)+'</span> '+esc(x.gen)+' · set '+x.nr+' van 9</div>';
+    alt.forEach(b=>{
+      h+='<div class="pplanb"><b>Plan B</b> '+b.t+' · '+esc(airV(b.v).n)+' · '+esc(b.act)+' <i>'+esc(b.gen)+'</i></div>';
+    });
+    h+='</div>';
+    const vol=AIRPLAN[i+1];
+    if(vol){
+      const gap=tijden[i+1].s-tijden[i].e, v2=airV(vol.v);
+      if(vol.v===x.v){
+        h+='<div class="pgap">'+(gap>0?gap+' min pauze · blijf in '+esc(v.n):'direct door in '+esc(v.n))+'</div>';
+      } else {
+        const loop=loopMin(v.ll,v2.ll);
+        h+='<div class="pgap'+(loop>gap?' krap':'')+'">↓ ± '+loop+' min lopen naar '+esc(v2.n)+' · '+gap+' min tussen de sets'+
+           (loop>gap?'. Krap: je mist het begin van de volgende set of verlaat de vorige eerder.':'')+'</div>';
+      }
+    }
+  });
+  h+='<div class="vnoot" style="padding:0 4px 8px">Loopminuten zijn een schatting: hemelsbrede afstand maal 1,25 aan 4,8 km/u, met de venue-posities uit de kaart.</div>';
+  h+='<div class="vknoppen"><button type="button" data-pkaart="alles">Alle venues op de kaart</button>'+
+     '<button type="button" data-pkaart="uit">Venues van de kaart halen</button></div>';
+  h+='<div class="vnoot" style="padding:8px 4px 0">Bronnen: je Airwaves Zaterdagplan, icelandairwaves.is/venues, je Festival Day Pass zaterdag.</div>';
+  return h;
+}
+function openProgramma(){
+  kopHoogte(); if(typeof sluitVervoer==='function') sluitVervoer();
+  pp.classList.add('open'); zetAir(true); syncPknop();
+  pin.innerHTML=viewProgramma(); pin.scrollTop=0;
+}
+function sluitProgramma(){ pp.classList.remove('open'); syncPknop(); }
+pknop.addEventListener('click',()=>pp.classList.contains('open')?sluitProgramma():openProgramma());
+document.getElementById('psluit').addEventListener('click',sluitProgramma);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&pp.classList.contains('open')) sluitProgramma(); });
+function toonSet(nr){
+  const x=AIRPLAN.find(y=>y.nr===nr), v=airV(x.v);
+  sluitProgramma(); zetAir(true); dicht();
+  kaart.setView(v.ll,16,{animate:true});
+  setTimeout(()=>v.marker.openPopup(),260);
+}
+pin.addEventListener('click',e=>{
+  const s=e.target.closest('[data-set]'); if(s){ toonSet(+s.dataset.set); return; }
+  const b=e.target.closest('[data-pkaart]'); if(!b) return;
+  if(b.dataset.pkaart==='uit'){ sluitProgramma(); zetAir(false); return; }
+  sluitProgramma(); zetAir(true); dicht();
+  kaart.fitBounds(L.latLngBounds(AIR.map(v=>v.ll)),{paddingTopLeft:[28,150],paddingBottomRight:[28,120],maxZoom:16});
+});
+pin.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-set]')){ e.preventDefault(); toonSet(+e.target.dataset.set); } });
 teken();
 posities(false);
 }
