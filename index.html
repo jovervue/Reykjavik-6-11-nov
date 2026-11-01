@@ -542,21 +542,21 @@ const bord=(nr,naar,extra,halte)=>'<div class="bordrij"><span class="bord"><b>'+
 const bordenHtml=a=>a.map(x=>bord(x[0],x[1],x[2],x[3])).join('');
 /* Posities met ok:false zijn bij benadering getekend; controleer de exacte halte in de planner van straeto.is / flybus.is */
 const BUS = [
- {id:"kef-s", n:"KEF Komur — instappen lijn 55", t:"s", ll:[63.9853,-22.6040], sub:"Lijn 55 naar Reykjavík",
-  a:"Keflavík Airport, aankomstzijde", ok:false,
-  d:"Sinds 1 okt 2026 vertrekt lijn 55 naar Reykjavík bij de nieuwe halte KEF Komur, op een aparte plek aan de aankomstzijde. De looproute vanaf de terminal is overdekt. Kjóavellir is nu de halte van lijn 89 en niet meer van lijn 55.",
+ {id:"kef-s", n:"KEF Komur / Arrivals — instappen lijn 55", t:"s", ll:[63.9862, -22.62299], rel:{ref:"aur",dx:420,dy:30}, sub:"Lijn 55 naar Reykjavík",
+  a:"Keflavík Airport, aankomstzijde (bij de terminal)", ok:false,
+  d:"Sinds 1 okt 2026 vertrekt lijn 55 naar Reykjavík bij de nieuwe halte KEF Komur / Arrivals, aan de aankomstzijde van de terminal. De looproute vanaf de terminal is overdekt. Op de officiële haltekaart ligt de halte ± 430 m ten oosten van Hotel Aurora. Kjóavellir is nu de halte van lijn 89 en niet meer van lijn 55.",
   reg:"Vr 6 nov: 16:54 (BSÍ 18:06) · 17:54 (Fjörður 18:42) · 18:54 (Fjörður 19:42). contactloos of bij de chauffeur.",
   bord:[["55","BSÍ","rit die doorrijdt tot BSÍ"],["55","Fjörður","rit die in Hafnarfjörður eindigt"]],
-  u:"https://www.straeto.is/skipuleggja-ferd/ferdir-um-leifsstod"},
- {id:"kef-b", n:"KEF Brottfarir — uitstappen lijn 55", t:"s", ll:[63.9851,-22.6058], sub:"Lijn 55 uit Reykjavík stopt hier",
+  u:"https://www.kefairport.com/services/straeto"},
+ {id:"kef-b", n:"KEF Brottfarir / Departures — uitstappen lijn 55", t:"s", ll:[63.98501, -22.6276], rel:{ref:"aur",dx:195,dy:-102}, sub:"Lijn 55 uit Reykjavík stopt hier",
   a:"Keflavík Airport, vertrekzijde (bij de terminal)", ok:false,
-  d:"Lijn 55 uit Reykjavík zet je hier af, op dezelfde plek als de vliegtuigbussen. Instappen kan hier niet. Aurora Hotel ligt ± 100 m verderop. Nieuw sinds 1 okt 2026.",
+  d:"Lijn 55 uit Reykjavík zet je hier af, op dezelfde plek als de vliegtuigbussen. Instappen kan hier niet. Hotel Aurora ligt op de officiële haltekaart hemelsbreed ± 220 m verderop (de halte Kjóavellir van lijn 89 ligt ± 115 m van het hotel). Nieuw sinds 1 okt 2026.",
   reg:"Di 10 nov: 55 vanaf BSÍ om 16:28 (KEF 17:34), 17:28 (KEF 18:34) of 18:28 (KEF 19:34).",
   bord:[["55","KEF – Airport","richting Keflavík"]],
-  u:"https://www.stjornarradid.is/frettir/grein/2026-09-30-umbaetur-a-adkomu-og-adstodu-fyrir-almenningsvagna-a-keflavikurflugvelli/"},
- {id:"kef-f", n:"KEF — Flybus (aankomsthal)", t:"f", ll:[63.9846,-22.6060], sub:"Flybus naar BSÍ",
+  u:"https://www.kefairport.com/services/straeto"},
+ {id:"kef-f", n:"KEF — Flybus (aankomsthal)", t:"f", ll:[63.98476, -22.62483], rel:{ref:"aur",dx:330,dy:-130,onzeker:true}, sub:"Flybus naar BSÍ",
   a:"Keflavík Airport, buiten de aankomsthal", ok:false,
-  d:"De Flybus staat buiten het terminalgebouw en vertrekt ± 35 tot 45 min na elke aankomende vlucht. Het ticket vanaf KEF is flexibel: je mag elke bus nemen.",
+  d:"De Flybus staat buiten het terminalgebouw (de pin staat bij de terminal, niet op de exacte plek) en vertrekt ± 35 tot 45 min na elke aankomende vlucht. Het ticket vanaf KEF is flexibel: je mag elke bus nemen.",
   reg:"Rit ± 45 min tot BSÍ.",
   bord:[["Flybus","Reykjavík BSÍ","richting Reykjavík · bordtekst niet bevestigd"]],
   u:"https://flybus.is/plan-your-trip/prices/"},
@@ -566,7 +566,7 @@ const BUS = [
   reg:"Terug naar KEF vanaf BSÍ: Strætó 55 om 16:28, 17:28 of 18:28 (laatste doorgaande rit) · Flybus om de 30 tot 60 min tot 22:30.",
   bord:[["55","KEF – Airport","richting Keflavík"],["Flybus","KEF Airport","bordtekst niet bevestigd; personeel wijst de juiste bus aan"],["14","Grandi","richting appartement (afgeleid)","Uitstappen: halte Mýrargata"],["15","Vesturbær","richting appartement (afgeleid)","Uitstappen: halte Mýrargata"]],
   u:"https://flybus.is/plan-your-trip/bsi-bus-terminal/"},
- {id:"fjo", n:"Fjörður (Hafnarfjörður)", t:"s", ll:[64.0677,-21.9633], sub:"Overstap lijn 55 ↔ lijn 1",
+ {id:"fjo", n:"Fjörður (Hafnarfjörður)", t:"s", ll:[64.0680,-21.9585], g:"Fjarðargata 13, Hafnarfjörður", max:2, sub:"Overstap lijn 55 ↔ lijn 1",
   a:"Hafnarfjörður", ok:false,
   d:"Veel ritten van lijn 55 beginnen en eindigen hier in plaats van in BSÍ. Van hieruit rijdt lijn 1 naar het centrum van Reykjavík.",
   reg:"6 nov: 17:54-rit hier om 18:42, 18:54-rit om 19:42. 10 nov: 55 vertrekt hier om 19:50 naar KEF (aankomst 20:33).",
@@ -580,19 +580,19 @@ const BUS = [
   u:"https://www.straeto.is/skipuleggja-ferd/timatoflur/hofudborgarsvaedid/leid-1"},
  {id:"myr", n:"Mýrargata — halte bij het logement", t:"s", ll:[64.1508,-21.9452], sub:"Lijnen 14, 13, 15 (volgens Moovit)",
   a:"Mýrargata, Reykjavík", ok:false,
-  d:"Halte op 1 tot 2 min lopen van Mýrargata 18. Volgens Moovit stoppen hier de lijnen 14, 13 en 15; lijn 14 en 15 stoppen ook bij BSÍ. Dat lijn 1 hier stopt is niet bevestigd.",
+  d:"Halte op ± 2 min lopen van Mýrargata 18 (positie niet bevestigd). Volgens Moovit stoppen hier de lijnen 14, 13 en 15; lijn 14 en 15 stoppen ook bij BSÍ. Dat lijn 1 hier stopt is niet bevestigd.",
   reg:"Stadsbus vanaf BSÍ: lijn 14 of 15 (geschat 10 tot 15 min, controleer rittijd en frequentie in de planner op straeto.is).",
-  bord:[["14","Grandi","komt uit BSÍ (afgeleid)","Uitstappen: halte Mýrargata, 1 tot 2 min van nr. 18"],["15","Vesturbær","komt uit BSÍ (afgeleid)","Uitstappen: halte Mýrargata, 1 tot 2 min van nr. 18"]],
+  bord:[["14","Grandi","komt uit BSÍ (afgeleid)","Uitstappen: halte Mýrargata, ± 2 min van nr. 18"],["15","Vesturbær","komt uit BSÍ (afgeleid)","Uitstappen: halte Mýrargata, ± 2 min van nr. 18"]],
   u:"https://www.straeto.is/skipuleggja-ferd"},
- {id:"fbp", n:"Flybus+ halte — Sjóminjasafnið", t:"f", ll:[64.1525,-21.9488], sub:"Flybus+ ophalen en afzetten",
+ {id:"fbp", n:"Flybus+ halte — Sjóminjasafnið", t:"f", ll:[64.1525,-21.9488], g:"Grandagarður 8, Reykjavík", max:1, sub:"Flybus+ ophalen en afzetten",
   a:"Grandagarður 8, bij het Maritiem Museum", ok:false,
   d:"Toeristenhalte 15 (Vesturbugt, Mýrargata) is volgens Guide to Iceland tijdelijk verplaatst naar de voorkant van het Sjóminjasafnið, ook halte 17 genoemd. Controleer de actuele halte bij het boeken op flybus.is.",
   reg:"Op 6 nov zet de Flybus+-minibus je hier af.",
   bord:[["Flybus+","BSÍ","minibus; bordtekst niet bevestigd","Ophalen en afzetten: halte Sjóminjasafnið, ± 200 m van het appartement"]],
   u:"https://busstop.is/"},
- {id:"aur", n:"Aurora Hotel (Blikavöllur 2)", t:"h", ll:[63.9862,-22.6068], sub:"Verblijf 10 → 11 nov",
+ {id:"aur", n:"Aurora Hotel (Blikavöllur 2)", t:"h", ll:[63.98593,-22.63159], g:"Blikavöllur 2, 235 Reykjanesbær", alt:["Blikavöllur 2, Keflavík","Airport Hotel Aurora Star, Keflavík"], maps:"Blikavöllur 2, 235 Reykjanesbær, IJsland", max:5, sub:"Verblijf 10 → 11 nov",
   a:"Blikavöllur 2, 235 Reykjanesbær", ok:false,
-  d:"± 100 m van de KEF-terminal. Vanaf de terminal te voet via het vertrekgebied. Opgegeven aankomsttijd 21:00, telefoon +354 595 1900. Vlucht HV9122 vertrekt wo 11 nov om 10:20, rond 08:00 inchecken."}
+  d:"Ligt achter de parkeerplaatsen van de terminal. Volgens de officiële haltekaart van Strætó is het hemelsbreed ± 220 m lopen naar de halte KEF Brottfarir (waar lijn 55 je afzet). Opgegeven aankomsttijd 21:00, telefoon +354 595 1900. Vlucht HV9122 vertrekt wo 11 nov om 10:20, rond 08:00 inchecken."}
 ];
 
 /*PURE-START*/
@@ -648,7 +648,8 @@ function berekenTerug(vanStr,totStr){
 }
 /*PURE-END*/
 
-const THUIS=[64.1512,-21.9470];
+/* Booking-bevestiging: GPS N 64° 9.093, W 21° 56.899 */
+const THUIS=[64.15155,-21.94832];
 const FIJN = window.matchMedia('(pointer:fine)').matches;
 const CACHE='rvk-coords-v2';
 let vertrek=THUIS.slice(), vertrekNaam='Mýrargata 18';
@@ -816,10 +817,11 @@ function busPopup(b){
     '<div>'+esc(b.d)+'</div>'+
     (b.reg?'<div class="pop-expo">'+esc(b.reg)+'</div>':'')+
     (b.bord?'<div class="bordnoot">Bord op de bus</div>'+bordenHtml(b.bord)+'<div class="bordnoot">Lijnnummer en eindhalte volgens straeto.is. De exacte bordtekst is niet gepubliceerd, ga op het nummer af.</div>':'')+
-    (b.ok?'':'<div class="pop-winter">Positie bij benadering — controleer de exacte halte voor je erheen gaat.</div>')+
+    (((b.ok||b.exact||b.rel)&&!(b.rel&&b.rel.onzeker))?(b.rel?'<div class="pop-adres">Positie afgeleid van de officiële haltekaart (± 30 m), t.o.v. het hotel.</div>':''):'<div class="pop-winter">Positie bij benadering — controleer de exacte halte voor je erheen gaat.</div>')+
     '<div class="pop-links">'+
-    (b.u?'<a href="'+b.u+'" target="_blank" rel="noopener">Informatie ↗</a>':'')+
-    '<a href="https://www.google.com/maps/dir/?api=1&destination='+b.ll[0]+','+b.ll[1]+'" target="_blank" rel="noopener">Route hierheen ↗</a></div>';
+    (b.u?'<a href="'+b.u+'" target="_blank" rel="noopener">'+(b.id.indexOf('kef')===0?'KEF-haltekaart ↗':'Informatie ↗')+'</a>':'')+
+    '<a href="https://www.google.com/maps/dir/?api=1&destination='+(b.maps?encodeURIComponent(b.maps):b.ll[0]+','+b.ll[1])+'" target="_blank" rel="noopener">Route hierheen ↗</a></div>'+
+    (b.g&&b.exact?'<div class="bordnoot">Positie opgezocht via het adres '+esc(b.maps||b.g)+'.</div>':'');
 }
 BUS.forEach(b=>{
   b.km=afstand(vertrek,b.ll);
@@ -828,6 +830,15 @@ BUS.forEach(b=>{
       title:b.n})
     .addTo(laagBus).bindPopup(()=>busPopup(b),popOpties);
 });
+/* Haltes die relatief aan een geocodeerd punt (het hotel) getekend zijn volgen dat punt */
+function volgers(m){
+  BUS.forEach(b=>{
+    if(!b.rel||b.rel.ref!==m.id) return;
+    const ll=[m.ll[0]+b.rel.dy/111000, m.ll[1]+b.rel.dx/(111320*Math.cos(m.ll[0]*Math.PI/180))];
+    b.ll=ll; b.km=afstand(vertrek,ll); if(b.marker) b.marker.setLatLng(ll);
+    if(!b.rel.onzeker) b.exact=true;
+  });
+}
 const lijnenGroep=L.layerGroup().addTo(laagBus);
 const bpos=id=>BUS.find(x=>x.id===id).ll;
 function tekenLijnen(){
@@ -848,17 +859,17 @@ function tekenLijnen(){
 /* Adressen volgens icelandairwaves.is/venues. Posities met ok:false zijn bij benadering; de app haalt ze eenmalig op via de adressen. */
 const AIRKLEUR='#C2185B';
 const AIR=[
- {id:'idno',n:'Iðnó',a:'Vonarstræti 3',g:'Vonarstræti 3, Reykjavík',ll:[64.1431,-21.9392],ok:false,
+ {id:'idno',n:'Iðnó',a:'Vonarstræti 3',g:'Vonarstræti 3, Reykjavík',max:1.5,ll:[64.1431,-21.9392],ok:false,
   d:'Festivalvenue, volledig toegankelijk.'},
- {id:'lemmy',n:'Lemmy',a:'Austurstræti 20',g:'Austurstræti 20, Reykjavík',ll:[64.1468,-21.9407],ok:false,
+ {id:'lemmy',n:'Lemmy',a:'Austurstræti 20',g:'Austurstræti 20, Reykjavík',max:1.5,ll:[64.1468,-21.9407],ok:false,
   d:'Festivalvenue, volledig toegankelijk. Volgens icelandairwaves.is: vraag naar de zijingang.'},
- {id:'ros',n:'Rosenberg',a:'Naustin (voormalig BIRD)',g:'Naustin, Reykjavík',ll:[64.1487,-21.9428],ok:false,
+ {id:'ros',n:'Rosenberg',a:'Naustin (voormalig BIRD)',g:'Naustin, Reykjavík',max:1.5,ll:[64.1487,-21.9428],ok:false,
   d:'Festivalvenue, volledig toegankelijk. icelandairwaves.is vermeldt alleen "Naustin (former BIRD)", zonder huisnummer: controleer de exacte plek.'},
- {id:'frik',n:'Fríkirkjan',a:'Fríkirkjuvegur 5',g:'Fríkirkjuvegur 5, Reykjavík',ll:[64.1448,-21.9338],ok:false,
+ {id:'frik',n:'Fríkirkjan',a:'Fríkirkjuvegur 5',g:'Fríkirkjuvegur 5, Reykjavík',max:1.5,ll:[64.1448,-21.9338],ok:false,
   d:'Festivalvenue, volledig toegankelijk.'},
- {id:'nasa',n:'NASA',a:'Thorvaldsensstræti 2',g:'Thorvaldsensstræti 2, Reykjavík',ll:[64.1478,-21.9407],ok:false,
+ {id:'nasa',n:'NASA',a:'Thorvaldsensstræti 2',g:'Thorvaldsensstræti 2, Reykjavík',max:1.5,ll:[64.1478,-21.9407],ok:false,
   d:'Festivalvenue, volledig toegankelijk.'},
- {id:'city',n:'City Hall (Ráðhús)',a:'Tjarnargata 11',g:'Tjarnargata 11, Reykjavík',ll:[64.1465,-21.9390],ok:false,
+ {id:'city',n:'City Hall (Ráðhús)',a:'Tjarnargata 11',g:'Tjarnargata 11, Reykjavík',max:1.5,ll:[64.1465,-21.9390],ok:false,
   d:'Festivalvenue, volledig toegankelijk.'}
 ];
 /* hoofdplan: negen sets zonder overlap */
@@ -1044,7 +1055,9 @@ function leesCache(){ try{ return JSON.parse(localStorage.getItem(CACHE)||'{}');
 function schrijfCache(o){ try{ localStorage.setItem(CACHE,JSON.stringify(o)); }catch(e){} }
 
 function zetPositie(m,ll){
+  if(m.max&&afstand(m.ll,ll)>m.max) return;
   m.ll=ll; m.km=afstand(vertrek,ll); m.exact=true; m.marker.setLatLng(ll);
+  if(m.id) volgers(m);
   EXPO.forEach(e=>{ if(e.m===m&&e.ring) e.ring.setLatLng(ll); });
   VIKING.forEach(v=>{ if(v.m===m&&v.ring) v.ring.setLatLng(ll); });
 }
@@ -1054,7 +1067,7 @@ async function posities(forceer){
   let uitCache=0;
   const alles=M.concat(GV,BIER,BUS,AIR);
   alles.forEach(m=>{ if(m.g&&cache[m.g]) { zetPositie(m,cache[m.g]); uitCache++; } });
-  const todo=alles.filter(m=>m.g&&!cache[m.g]);
+  const todo=alles.filter(m=>m.g&&!cache[m.g]).sort((a,b)=>(b.id?1:0)-(a.id?1:0)); /* haltes, hotel en venues eerst */
   teken();
   if(!todo.length){ melding(uitCache+' posities uit het geheugen — geen netwerk nodig'); return; }
   if(!navigator.onLine){ melding('Offline — posities bij benadering'); return; }
@@ -1063,8 +1076,12 @@ async function posities(forceer){
     const m=todo[i];
     melding('Posities ophalen… '+(i+1)+'/'+todo.length+' (eenmalig)');
     try{
-      const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(m.g));
-      const j=await r.json();
+      let j=null;
+      for(const q of [m.g].concat(m.alt||[])){
+        const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=is&q='+encodeURIComponent(q));
+        j=await r.json(); if(j&&j[0]) break;
+        await new Promise(res=>setTimeout(res,1100));
+      }
       if(j&&j[0]){ const ll=[+j[0].lat,+j[0].lon]; cache[m.g]=ll; zetPositie(m,ll); ok++; }
     }catch(e){}
     await new Promise(r=>setTimeout(r,1100));
@@ -1099,7 +1116,7 @@ function zetBus(aan){
 }
 const stadsbusNoot='Stadsbus: lijn 14 en 15 stoppen volgens Moovit zowel bij BSÍ als bij de halte Mýrargata. Rittijd en frequentie zijn niet bevestigd, controleer ze in de planner op straeto.is.';
 const bordNoot='Bordjes: lijnnummer en eindhalte komen uit de routepagina\'s op straeto.is. Strætó publiceert de exacte tekst op de bus niet, dus ga vooral op het lijnnummer af. Voor lijn 14 en 15 is de richting afgeleid van de eindhalten (14 Grandi – Verzló, 15 Vesturbær – Mosfellsbær); Moovit noemt bij BSÍ voor lijn 15 een andere naam (Reykjavegur). Controleer het bord bij het instappen.';
-const stadsBordHeen=bordenHtml([['14','Grandi','richting Grandi','Uitstappen: halte Mýrargata (1 tot 2 min lopen)'],['15','Vesturbær','richting Vesturbær','Uitstappen: halte Mýrargata (1 tot 2 min lopen)']]);
+const stadsBordHeen=bordenHtml([['14','Grandi','richting Grandi','Uitstappen: halte Mýrargata (± 2 min lopen)'],['15','Vesturbær','richting Vesturbær','Uitstappen: halte Mýrargata (± 2 min lopen)']]);
 
 function formAan(){
   return '<div class="vk"><div class="vt">Vr 6 nov · KEF → Mýrargata 18</div>'+
@@ -1149,7 +1166,7 @@ function formTerug(){
   return '<div class="vk"><div class="vt">Di 10 nov · BSÍ → KEF → Aurora Hotel</div>'+
     '<div class="vform"><label>Aan het hotel vanaf<input type="time" id="v-van" value="'+vst.van+'"></label>'+
     '<label>tot<input type="time" id="v-tot" value="'+vst.tot+'"></label></div>'+
-    '<div class="vnoot">Alleen ritten vanaf BSÍ. Uitchecken vóór 10:00. Het hotel ligt ± 100 m van de terminal, opgegeven aankomsttijd 21:00.</div></div>'+
+    '<div class="vnoot">Alleen ritten vanaf BSÍ. Uitchecken vóór 10:00. Vanaf de halte KEF Brottfarir is het hotel hemelsbreed ± 220 m lopen (officiële haltekaart). Opgegeven aankomsttijd 21:00.</div></div>'+
     '<div id="v-uit"></div>';
 }
 function uitTerug(){
@@ -1172,7 +1189,7 @@ function uitTerug(){
     '<div class="vsub">Kies in de boekingskalender op flybus.is een vertrek in dit venster. Een bus doet er ± 45 min over.<br>'+
     'Aan het hotel ± '+ts(f.bsi[0]+51)+' tot '+ts(f.bsi[1]+51)+'.<br>'+
     'De laatste Flybus vertrekt om 22:30. Bij een gemiste bus blijft het ticket geldig voor de volgende.</div></div>';
-  h+='<div class="vnoot" style="padding:0 4px 8px">Aan het hotel stap je uit bij KEF Brottfarir, bij de terminal. Instappen kan daar niet.</div>';
+  h+='<div class="vnoot" style="padding:0 4px 8px">Aan het hotel stap je uit bij KEF Brottfarir / Departures, bij de terminal. Instappen kan daar niet. Daarna is het hotel hemelsbreed ± 220 m lopen.</div>';
   h+='<div class="vnoot" style="padding:0 4px 8px">Bordjes: lijnnummer en bestemming komen van straeto.is en flybus.is. De exacte tekst op de bus is niet gepubliceerd, dus ga op het lijnnummer af. Flybus-personeel in BSÍ wijst de juiste bus aan.</div>';
   h+=kaartKnoppen;
   document.getElementById('v-uit').innerHTML=h;
